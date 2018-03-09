@@ -43,9 +43,9 @@ X = data[:, 2:]
 y_pred = np.mean(X,1)
 col = ["y"]
 index = [str(i) for i in range(10000, len(y_pred)+10000)]
-print(len(index))
-print(len(y_pred))
-print(len(col))
+#print(len(index))
+#print(len(y_pred))
+#print(len(col))
 # print solution to file
 df = pd.DataFrame(y_pred ,col)
 df.to_csv("sample.csv")
