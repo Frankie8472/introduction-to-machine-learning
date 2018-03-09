@@ -25,8 +25,6 @@ y_pred = np.mean(X,1)
 # error function
 RMSE = mean_squared_error(y, y_pred)**0.5
 
-print(RMSE)
-
 ## TEST
 
 # read file
@@ -41,12 +39,8 @@ X = data[:, 2:]
 
 # mean function with nothing learned
 y_pred = np.mean(X,1)
-col = ["y"]
-index = [str(i) for i in range(10000, len(y_pred)+10000)]
-#print(len(index))
-#print(len(y_pred))
-#print(len(col))
+
 # print solution to file
-df = pd.DataFrame(y_pred ,col)
-df.to_csv("sample.csv")
+result = pd.DataFrame(data={"Id": list(range(10000,len(y_pred)+10000)), "y": y_pred})
+result.to_csv("sample.csv", index=False)
 
