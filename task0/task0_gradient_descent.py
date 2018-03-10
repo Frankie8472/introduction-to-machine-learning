@@ -6,27 +6,28 @@ import pandas as pd  # tipp from dimitri (python teacher)
 import numpy as np
 from sklearn.metrics import mean_squared_error
 from sklearn import linear_model
+from sklearn.linear_model import SGDRegressor
 
 ## TRAIN
 
-# read file
+# Read file
 raw_data_train = pd.read_csv("train.csv")
 
-# turn raw data into matrix
+# Turn raw data into matrix
 data_train = raw_data_train.as_matrix()
 
-# filter matrix
+# Filter matrix
 y_train = data_train[:, 1]
 X_train = data_train[:, 2:]
 
-# Sort before adding (floating point), makes it actually worse...
-X_train = np.sort(X_train, 1)
+# Create an SGDClassifier instance which will have methods to do our linear regression fitting by gradient descent
+fitter = SGDRegressor(loss="squared_loss", penalty="l2", l1_ratio=0.15, learning_rate="constant", max_iter=1000, tol=None)
 
-# mean function
-y_pred = np.mean(X_train, 1)
+# Train
+fitter.fit(X_train, y_train)
 
 # Error function
-RMSE_train = mean_squared_error(y_train, y_pred) ** 0.5
+RMSE_train = mean_squared_error(y_train, fitter.predict(X_train)) ** 0.5
 print("RMSE = " + str(RMSE_train))
 
 ## TEST
@@ -40,12 +41,9 @@ data_test = raw_data_test.as_matrix()
 # Filter matrix
 X_test = data_test[:, 1:]
 
-# Sort before adding (floating point), makes it actually worse...
-X_test = np.sort(X_test, 1)
-
-# Mean function with nothing learned
-y_pred_test = np.mean(X_test, 1)
+# Predict
+y_pred_test = fitter.predict(X_test)
 
 # Print solution to file
 result = pd.DataFrame(data={"Id": raw_data_test["Id"], "y": y_pred_test})
-result.to_csv("sample.csv", index=False)
+result.to_csv("sample_gradient_descent.csv", index=False)

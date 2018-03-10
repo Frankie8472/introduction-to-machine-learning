@@ -2,16 +2,20 @@
 # test.csv      - the test set (make predictions based on this file)
 # sample.csv    - a sample submission file in the correct format
 
+##
+## DOES NOT WORK... DONT KNOW WHY
+##
+
 import pandas as pd  # tipp from dimitri (python teacher)
 import numpy as np
 from sklearn.metrics import mean_squared_error
 from sklearn import linear_model
+from sklearn.linear_model import Perceptron
 
 ## TRAIN
 
 # read file
 raw_data_train = pd.read_csv("train.csv")
-
 # turn raw data into matrix
 data_train = raw_data_train.as_matrix()
 
@@ -19,15 +23,14 @@ data_train = raw_data_train.as_matrix()
 y_train = data_train[:, 1]
 X_train = data_train[:, 2:]
 
-# Sort before adding (floating point), makes it actually worse...
-X_train = np.sort(X_train, 1)
+# Create an SGDClassifier instance which will have methods to do our linear regression fitting by gradient descent
+fitter = Perceptron(max_iter=5, tol=None)
 
-# mean function
-y_pred = np.mean(X_train, 1)
+fitter.fit(X_train, y_train)
 
-# Error function
-RMSE_train = mean_squared_error(y_train, y_pred) ** 0.5
-print("RMSE = " + str(RMSE_train))
+# error function
+#RMSE_train = mean_squared_error(y_train, fitter.predict(X_train)) ** 0.5
+#print("RMSE = " + str(RMSE_train))
 
 ## TEST
 
@@ -40,12 +43,9 @@ data_test = raw_data_test.as_matrix()
 # Filter matrix
 X_test = data_test[:, 1:]
 
-# Sort before adding (floating point), makes it actually worse...
-X_test = np.sort(X_test, 1)
-
-# Mean function with nothing learned
-y_pred_test = np.mean(X_test, 1)
+# Predict
+#y_pred_test = fitter.predict(X_test)
 
 # Print solution to file
-result = pd.DataFrame(data={"Id": raw_data_test["Id"], "y": y_pred_test})
-result.to_csv("sample.csv", index=False)
+#result = pd.DataFrame(data={"Id": raw_data_test["Id"], "y": y_pred_test})
+#result.to_csv("sample_perceptron.csv", index=False)
