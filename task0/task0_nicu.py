@@ -14,7 +14,6 @@ with open('test.csv', 'r') as f:
         for i in range(1, len(row)):
             sum += float(row[i])
         avg = sum / (len(row) -1)
-
         csv_writer.writerow([id, avg])
 
 
