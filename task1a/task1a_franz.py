@@ -3,39 +3,56 @@
 # test.csv      - the test set (make predictions based on this file)
 # sample.csv    - a sample submission file in the correct format
 
-import pandas as pd  # tipp from dimitri (python teacher)
+import pandas as pd
 import numpy as np
+from sklearn.utils import shuffle
+from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
-from sklearn.linear_model import RidgeCV
 
-precision = np.float128
+
 alphas = [0.1, 1.0, 10.0, 100.0, 1000.0]
+n = 10
+seed = None     # Integer for same output
+rmse = []
+mean_rmse = []
 
-## TRAIN
+# Import data
+data = pd.read_csv("train.csv")
 
-# read file
-raw_data_train = pd.read_csv("train.csv")
+# Shuffle data
+data = shuffle(data, random_state=seed)
 
-# turn raw data into matrix
-data_train = raw_data_train.as_matrix()
+# Convert to matrix
+data = data.as_matrix()
 
-# filter matrix
-y_train = np.asarray(data_train[:, 1], dtype=precision)
-X_train = np.asarray(data_train[:, 2:], dtype=precision)
+# Split into chunks
+data_set = np.array_split(data, indices_or_sections=n)
 
-# Create an SGDClassifier instance which will have methods to do our linear regression fitting by gradient descent
-fitter = RidgeCV(alphas=alphas,
-                 fit_intercept=True,
-                 normalize=False,
-                 scoring=None,
-                 cv=None,
-                 gcv_mode='auto',
-                 store_cv_values=True
-                 )
+
+
 
 # Train
-fitter.fit(X_train, y_train, sample_weight=None)
-print(fitter.cv_values_)
+for alpha in alphas:
+    clf = Ridge(alpha=alpha, copy_X=True, solver="auto")
+
+    for i in range(0, n):
+        y_test = data_set[i][:, 1]
+        X_test = data_set[i][:, 2:]
+
+        train_set = np.concatenate(data_set[i:])
+        y_train = train_set[:, 1]
+        X_train = train_set[:, 2:]
+
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+
+        rmse.append(mean_squared_error(y_test, y_pred) ** 0.5)
+
+    mean_rmse.append(np.mean(rmse))
+    rmse = []
+
 # Print solution to file
-#result = pd.DataFrame(data={"": fitter.cv_values_})
-#result.to_csv("sample_franz.csv", index=False)
+result = pd.DataFrame(mean_rmse)
+result.to_csv("sample_franz.csv", index=False, header=False)
+
+print(mean_rmse)

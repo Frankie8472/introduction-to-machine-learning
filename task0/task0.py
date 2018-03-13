@@ -11,7 +11,6 @@ from sklearn import linear_model
 
 # read file
 raw_data_train = pd.read_csv("train.csv")
-
 # turn raw data into matrix
 data_train = raw_data_train.as_matrix()
 

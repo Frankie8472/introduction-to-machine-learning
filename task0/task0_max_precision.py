@@ -47,7 +47,8 @@ X_test = np.asarray(data_test[:, 1:], dtype=precision)
 
 # Mean function with nothing learned
 y_pred_test = np.mean(X_test, 1)
-
+print(np.shape(X_test))
+print(y_pred_test)
 # Print solution to file
 result = pd.DataFrame(data={"Id": raw_data_test["Id"], "y": y_pred_test})
 result.to_csv("sample_max_precision.csv", index=False)
