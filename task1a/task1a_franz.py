@@ -28,9 +28,6 @@ data = data.as_matrix()
 # Split into chunks
 data_set = np.array_split(data, indices_or_sections=n)
 
-
-
-
 # Train
 for alpha in alphas:
     clf = Ridge(alpha=alpha, copy_X=True, solver="auto")
@@ -39,7 +36,7 @@ for alpha in alphas:
         y_test = data_set[i][:, 1]
         X_test = data_set[i][:, 2:]
 
-        train_set = np.concatenate(data_set[i:])
+        train_set = np.concatenate(data_set[0:i]+data_set[(i+1):])
         y_train = train_set[:, 1]
         X_train = train_set[:, 2:]
 
