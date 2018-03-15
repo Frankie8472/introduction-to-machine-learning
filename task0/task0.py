@@ -21,7 +21,6 @@ X_train = data_train[:, 2:]
 # Sort before adding (floating point), makes it actually worse...
 X_train = np.sort(X_train, 1)
 
-#i am a comment
 # mean function
 y_pred = np.mean(X_train, 1)
 
