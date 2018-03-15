@@ -20,19 +20,19 @@ n = df.shape[0]
 val_size = n // k #daring to do simple integer division, no rounding errors in this case ^^
 
 # Result variables
-rmse_sum = 0.0
+rmse_items = []
 rmse_avg = []
 
 # Iterate over all alphas
 for alpha in alphas:
 
-    clf = Ridge(alpha=alpha)
+    clf = Ridge(alpha=alpha, copy_X=True, solver="auto")
 
     for i in range(k):
 
         # Split up dataframe for k-fold cross validation
         val_set = df.loc[i * val_size : (i+1) * val_size - 1]
-        train_set = pd.concat([df.loc[0:i * val_size-1],df.loc[(i+1) * val_size:]])
+        train_set = pd.concat([df.loc[0 : i * val_size - 1],df.loc[(i+1) * val_size:]])
 
         # Train on train_set
         y_train = train_set['y']
@@ -45,9 +45,10 @@ for alpha in alphas:
         y_pred = clf.predict(X_val)
 
         # Store Root Mean Squared Error
-        rmse_sum += mean_squared_error(y_val, y_pred)**0.5
+        rmse_items.append(mean_squared_error(y_val, y_pred)**0.5)
 
-    rmse_avg.append(rmse_sum / k)
+    rmse_avg.append(np.mean(rmse_items)) # Use np.mean instead of manual calculation
+    rmse_items = []
 
 
 # Print solution to file
