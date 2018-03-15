@@ -25,12 +25,12 @@ data = shuffle(data, random_state=seed)
 # Convert to matrix
 data = data.as_matrix()
 
-# Split into chunks
+# Split into chunks         LOOK INTO KFOLD
 data_set = np.array_split(data, indices_or_sections=n)
 
 # Train
 for alpha in alphas:
-    clf = Ridge(alpha=alpha, copy_X=True, solver="auto")
+    clf = Ridge(alpha=alpha, copy_X=True, solver="auto")    # tol = 0.0001
 
     for i in range(0, n):
         y_test = data_set[i][:, 1]
