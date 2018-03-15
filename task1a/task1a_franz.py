@@ -5,40 +5,28 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.utils import shuffle
+from sklearn.model_selection import KFold
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
 
-
+# Parameter initialization
 alphas = [0.1, 1.0, 10.0, 100.0, 1000.0]
 n = 10
-seed = None     # Integer for same output
 rmse = []
 mean_rmse = []
 
-# Import data
-data = pd.read_csv("train.csv")
-
-# Shuffle data
-data = shuffle(data, random_state=seed)
-
-# Convert to matrix
+# Import data and split
+data = pd.read_csv("train.csv", index_col="Id")
 data = data.as_matrix()
-
-# Split into chunks         LOOK INTO KFOLD
-data_set = np.array_split(data, indices_or_sections=n)
+kf = KFold(n_splits=n, shuffle=False, random_state=None)
 
 # Train
 for alpha in alphas:
-    clf = Ridge(alpha=alpha, copy_X=True, solver="auto")    # tol = 0.0001
+    clf = Ridge(alpha=alpha, fit_intercept=False)   # Assume the data is centered
 
-    for i in range(0, n):
-        y_test = data_set[i][:, 1]
-        X_test = data_set[i][:, 2:]
-
-        train_set = np.concatenate(data_set[0:i]+data_set[(i+1):])
-        y_train = train_set[:, 1]
-        X_train = train_set[:, 2:]
+    for train_index, test_index in kf.split(data):
+        y_train, y_test = data[train_index, 0], data[test_index, 0]
+        X_train, X_test = data[train_index, 1:], data[test_index, 1:]
 
         clf.fit(X_train, y_train)
         y_pred = clf.predict(X_test)

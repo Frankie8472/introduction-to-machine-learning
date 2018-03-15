@@ -22,14 +22,12 @@ data= data.as_matrix()
 
 # split the data into 10 different sets
 data_split = KFold(n_splits=10, shuffle=False, random_state=None)
-data_split.get_n_splits(data)
-
 
 #for all lamdas
 for l in lamda:
 
     #construct a solver for every lamda
-    clf = Ridge(alpha=l, copy_X=True, solver="auto")    # tol = 0.0001
+    clf = Ridge(alpha=l, solver="auto")
 
     #go through all training indexes
     for train_index, test_index in data_split.split(data):
