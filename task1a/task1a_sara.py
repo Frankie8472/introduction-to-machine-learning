@@ -1,7 +1,6 @@
 
 import pandas as pd
 import numpy as np
-from sklearn.utils import shuffle
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
@@ -18,7 +17,7 @@ mean_rmse = []
 data = pd.read_csv("train.csv")
 
 #convert data to matrix
-data= data.as_matrix()
+data = data.as_matrix()
 
 # split the data into 10 different sets
 data_split = KFold(n_splits=10, shuffle=False, random_state=None)
