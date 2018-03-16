@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 
 
-lamda = [0.1, 1.0, 10.0, 100.0, 1000.0]
+lamda = [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
 n = 10
 seed = None     # Integer for same output
 rmse = []
