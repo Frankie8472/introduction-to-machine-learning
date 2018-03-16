@@ -16,13 +16,13 @@ Y_total = data[0:, 1]
 X_total = np.c_[X_total, X_total**2, np.exp(X_total), np.cos(X_total), np.ones(np.alen(X_total))]
 
 
-clf = RidgeCV(alphas=[1], cv=10, fit_intercept=False)  # tol = 0.0001
+clf = RidgeCV(alphas=[1], cv=900, fit_intercept=False)  # tol = 0.0001
 
 clf.fit(X_total, Y_total, None)
 a = clf.coef_
 
 result = pd.DataFrame(a)
-result.to_csv("task1b_sara.csv", index=False, header=False)
+result.to_csv("task1b_sara_900fold.csv", index=False, header=False)
 
 
 
