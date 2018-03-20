@@ -20,7 +20,7 @@ data = pd.read_csv("train.csv")
 data = data.as_matrix()
 
 # split the data into 10 different sets
-data_split = KFold(n_splits=10, shuffle=False, random_state=None)
+data_split = KFold(n_splits=10, shuffle=False, fit_intercept=False, random_state=None)
 data_split.get_n_splits(data)
 
 #construct test sets
