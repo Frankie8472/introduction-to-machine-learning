@@ -19,8 +19,7 @@ mean_rmse = []
 data = pd.read_csv("train.csv", index_col="Id")
 data = data.as_matrix()
 kf = KFold(n_splits=n, shuffle=False, random_state=None)
-	knobelf	2018-03-15 12:54	 Completed in 0:00:00.053000	0.0363929688311	Select
-10	sample_tol_0_001.csv	kfold, ridge, tol = 0.001
+
 # Train
 for alpha in alphas:
     clf = Ridge(alpha=alpha, fit_intercept=False)   # Assume the data is centered
