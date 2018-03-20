@@ -69,7 +69,7 @@ clf.fit(X_total, Y_total)
 solution = clf.coef_
 
 result = pd.DataFrame(solution)
-result.to_csv("sara_with_perfect_alpha", index=False, header=False)
+result.to_csv("sara_with_perfect_alpha.csv", index=False, header=False)
 
 
 
