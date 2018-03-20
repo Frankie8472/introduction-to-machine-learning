@@ -6,7 +6,7 @@ from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import KFold
 
 
-lamda = [0.01, 0.1, 1.0, 10.0, 100.0, 1000.0]
+lamda = [0.1, 1.0, 10.0, 100.0, 1000.0]
 n = 10
 seed = None     # Integer for same output
 rmse = []
@@ -30,7 +30,7 @@ data_split.get_n_splits(data)
 for l in lamda:
 
     #construct a solver for every lamda
-    clf = Ridge(alpha=l, copy_X=True, solver="auto", fit_intercept=False, normalize=True, tol=0.0001)    # tol = 0.0001
+    clf = Ridge(alpha=l, copy_X=True, solver="auto", tol=0.0001)    # tol = 0.0001
 
     #go through all training indexes
     for train_index, test_index in data_split.split(data):
@@ -60,7 +60,7 @@ for l in lamda:
 
 #convert back to output file
 result = pd.DataFrame(mean_rmse)
-result.to_csv("1a_final_sara_ridge_10Fold_tol0.0001.csv", index=False, header=False)
+result.to_csv("1a_final_sara_without_fit_intercept", index=False, header=False)
 
 print(mean_rmse)
 
