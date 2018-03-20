@@ -28,7 +28,8 @@ per_alpha_msqe = []
 
 X_total = np.c_[X_total, X_total ** 2, np.exp(X_total), np.cos(X_total), np.ones(np.alen(X_total))]
 
-data_split = KFold(n_splits=10, shuffle=False,random_state=None)
+data_split = KFold(n_splits=10, shuffle=False, random_state=None)
+##########note set shuffle=True##############
 
 
 #test for every alpha the mean squared error made with a 10 fold cross validation
@@ -42,7 +43,7 @@ for a in alpha:
         y_test = Y_total[test_index]
 
         #create learning algorithm
-        clf = RidgeCV(alphas=[a], fit_intercept=False)  # tol = 0.0001
+        clf = RidgeCV(alphas=[a], fit_intercept=False, normalize=True)  # tol = 0.0001
         #train on training data
         clf.fit(x_train, y_train)
         #measure goodness
@@ -50,8 +51,8 @@ for a in alpha:
         msqe.append(mean_squared_error(y_test, y_pred) ** 0.5)
 
     #print(a, msqe)
-    per_alpha_msqe.append(np.   mean(msqe))
-    msque=[]
+    per_alpha_msqe.append(np.mean(msqe))
+    msqe=[]
 
 ###
 #now find the index of the smalles meansquarederror. that gives the best alpha
@@ -64,7 +65,7 @@ best_alpha = alpha[per_alpha_msqe.index(minimum)]
 
 print("The best alpha is", best_alpha)
 
-clf = RidgeCV(alphas=[best_alpha], fit_intercept=False,)
+clf = RidgeCV(alphas=[best_alpha], fit_intercept=False, normalize=True)
 clf.fit(X_total, Y_total)
 solution = clf.coef_
 
