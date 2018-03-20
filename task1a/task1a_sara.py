@@ -20,7 +20,7 @@ data = pd.read_csv("train.csv")
 data = data.as_matrix()
 
 # split the data into 10 different sets
-data_split = KFold(n_splits=10, shuffle=False, fit_intercept=False, random_state=None)
+data_split = KFold(n_splits=10, shuffle=False, random_state=None)
 data_split.get_n_splits(data)
 
 #construct test sets
@@ -30,12 +30,12 @@ data_split.get_n_splits(data)
 for l in lamda:
 
     #construct a solver for every lamda
-    clf = Ridge(alpha=l, copy_X=True, solver="auto", tol=0.0001)    # tol = 0.0001
+    clf = Ridge(alpha=l, copy_X=True, fit_intercept=True, solver="auto", tol=0.0001)    # tol = 0.0001
 
     #go through all training indexes
     for train_index, test_index in data_split.split(data):
 
-        #construct the training data sets
+        #construct the training datn_splitsa sets
         x_train = data[train_index, 2:]
         y_train = data[train_index, 1]
         #train on sets
@@ -50,7 +50,7 @@ for l in lamda:
 
         #calculate the mean squared error for specific partition
         rmse.append(mean_squared_error(y_test, y_pred) ** 0.5)
-
+n_splits
     #once all partitions are looked at compute the mean
     mean_rmse.append(np.mean(rmse))
     #reset rmse to empty list
