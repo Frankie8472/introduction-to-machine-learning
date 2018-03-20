@@ -30,7 +30,7 @@ data_split.get_n_splits(data)
 for l in lamda:
 
     #construct a solver for every lamda
-    clf = Ridge(alpha=l, copy_X=True, solver="auto", fit_intercept=False)    # tol = 0.0001
+    clf = Ridge(alpha=l, copy_X=True, solver="auto", fit_intercept=False, normalize=True, tol=0.0001)    # tol = 0.0001
 
     #go through all training indexes
     for train_index, test_index in data_split.split(data):
