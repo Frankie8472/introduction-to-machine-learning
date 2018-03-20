@@ -23,6 +23,8 @@ data = data.as_matrix()
 data_split = KFold(n_splits=10, shuffle=False, random_state=None)
 data_split.get_n_splits(data)
 
+#construct test sets
+
 
 #for all lamdas
 for l in lamda:
@@ -58,7 +60,7 @@ for l in lamda:
 
 #convert back to output file
 result = pd.DataFrame(mean_rmse)
-result.to_csv("sample_sara.csv", index=False, header=False)
+result.to_csv("1a_final_sara_ridge_10Fold_tol0.0001.csv", index=False, header=False)
 
 print(mean_rmse)
 
