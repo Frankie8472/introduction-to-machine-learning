@@ -50,7 +50,7 @@ for l in lamda:
 
         #calculate the mean squared error for specific partition
         rmse.append(mean_squared_error(y_test, y_pred) ** 0.5)
-n_splits
+
     #once all partitions are looked at compute the mean
     mean_rmse.append(np.mean(rmse))
     #reset rmse to empty list
@@ -60,7 +60,7 @@ n_splits
 
 #convert back to output file
 result = pd.DataFrame(mean_rmse)
-result.to_csv("1a_final_sara_without_fit_intercept", index=False, header=False)
+result.to_csv("1a_final_sara_fit_intercept=True.csv", index=False, header=False)
 
 print(mean_rmse)
 

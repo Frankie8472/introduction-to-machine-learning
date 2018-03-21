@@ -69,8 +69,9 @@ clf = RidgeCV(alphas=[best_alpha], fit_intercept=False, normalize=True)
 clf.fit(X_total, Y_total)
 solution = clf.coef_
 
+
 result = pd.DataFrame(solution)
-result.to_csv("sara_with_perfect_alpha.csv", index=False, header=False)
+result.to_csv("sara_with_perfect_alpha_fit_intercept=False.csv", index=False, header=False)
 
 
 
