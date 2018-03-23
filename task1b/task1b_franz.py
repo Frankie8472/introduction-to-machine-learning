@@ -3,13 +3,23 @@
 # sample.csv    - a sample submission file in the correct format
 
 import numpy as np
-from pandas import read_csv
-from pandas import DataFrame
-from sklearn.linear_model import RidgeCV, Ridge
-from sklearn.metrics import make_scorer, mean_squared_error
+from pandas import read_csv, DataFrame
+from sklearn.model_selection import KFold
+from sklearn.linear_model import Ridge
+from sklearn.metrics import mean_squared_error
 
-# Define parameter specs
-alphas = [10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20]
+# Parameter initialization
+alphas = np.geomspace(0.0001, 50.0, num=100)
+n = 900     # 5, 10, 900
+fit_intercept = False
+normalize = False
+max_iter = 3000
+tol = 0.0001
+solver = 'auto'   # ‘auto’, ‘svd’, ‘cholesky’, ‘lsqr’, ‘sparse_cg’, ‘sag’, ‘saga’
+random_state = 1
+rmse = []
+mean_rmse = []
+mean_std = []
 
 
 # Define exercise functions
@@ -27,8 +37,8 @@ def split_into_x_y(data_set):
     return x, y
 
 
-def root_mean_squared_error(y, y_pred):
-    return mean_squared_error(y, y_pred) ** 0.5
+def root_mean_squared_error(y, y_guess):
+    return mean_squared_error(y, y_guess) ** 0.5
 
 
 def square_element_wise(matrix):
@@ -57,32 +67,59 @@ def extend_features(features):
 
 # Get, split and transform dataset
 data = read_csv_to_matrix("train.csv", "Id")
-X_train, y_train = split_into_x_y(data)
-X_train = extend_features(X_train)
+X, y = split_into_x_y(data)
+X = extend_features(X)
+kf = KFold(n_splits=n, shuffle=False, random_state=None)
 
-# Loss function
-loss_func = make_scorer(root_mean_squared_error, greater_is_better=False)
+# Train
+for alpha in alphas:
+    clf = Ridge(alpha=alpha,
+                fit_intercept=fit_intercept,
+                normalize=normalize,
+                max_iter=max_iter,
+                tol=tol,
+                solver=solver,
+                random_state=random_state
+                )
 
-# Regressor
-reg = RidgeCV(alphas=alphas,
-              fit_intercept=True,
-              scoring=loss_func,
-              cv=None)
+    for train_index, test_index in kf.split(y):
+        y_train, y_test = y[train_index], y[test_index]
+        X_train, X_test = X[train_index, :], X[test_index, :]
 
-# Train with cv
-reg.fit(X_train, y_train)
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
 
-# Get ideal parameters
-best_alpha = reg.alpha_
-print(best_alpha)
+        rmse.append(root_mean_squared_error(y_test, y_pred))
+
+    mean_rmse.append((np.mean(rmse)))
+    mean_std.append(np.std(rmse))
+    rmse = []
+
+combi = (np.array(mean_rmse) + np.array(mean_std)).tolist()
+min_rmse = min(mean_rmse)
+min_std = min(mean_std)
+min_combi = min(combi)
+idx_combi = combi.index(min_combi)
+idx_rmse = mean_rmse.index(min_rmse)
+idx_std = mean_std.index(min_std)
+best_alpha = alphas[idx_combi]
+
+print("min_rmse = " + str(min_rmse) + ", " + str(idx_rmse))
+print("min_std = " + str(min_std) + ", " + str(idx_std))
+print("min_combi = " + str(min_combi) + ", " + str(idx_combi))
+print("alpha of min_combi = " + str(alphas[idx_combi]))
 
 clf = Ridge(alpha=best_alpha,
-            fit_intercept=True,
+            fit_intercept=fit_intercept,
+            normalize=normalize,
+            max_iter=max_iter,
+            tol=tol,
+            solver=solver,
+            random_state=random_state
             )
-clf.fit(X_train, y_train)
 
-# Calculate weights with the ideal parameters
+clf.fit(X_train, y_train)
 weights = clf.coef_
 
-# Write result in file
+# Print solution to file
 write_to_csv_from_vector("sample_franz.csv", weights)
