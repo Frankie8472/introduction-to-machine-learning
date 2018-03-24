@@ -9,11 +9,11 @@ from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
 
 # Parameter initialization
-alphas = np.geomspace(0.0001, 50.0, num=100)
+alphas = np.linspace(14, 15.5, num=100)  # np.geomspace(0.00001, 100.0, num=10000)
 n = 900     # 5, 10, 900
 fit_intercept = False
 normalize = False
-max_iter = 3000
+max_iter = 1000
 tol = 0.0001
 solver = 'auto'   # ‘auto’, ‘svd’, ‘cholesky’, ‘lsqr’, ‘sparse_cg’, ‘sag’, ‘saga’
 random_state = 1
@@ -104,10 +104,10 @@ idx_rmse = mean_rmse.index(min_rmse)
 idx_std = mean_std.index(min_std)
 best_alpha = alphas[idx_combi]
 
-print("min_rmse = " + str(min_rmse) + ", " + str(idx_rmse))
+print("min_rmse = " + str(min_rmse) + ", " + str(mean_std[idx_rmse]) + ", " + str(idx_rmse))
 print("min_std = " + str(min_std) + ", " + str(idx_std))
-print("min_combi = " + str(min_combi) + ", " + str(idx_combi))
-print("alpha of min_combi = " + str(alphas[idx_combi]))
+print("min_combi = " + str(min_combi) + ", " + str(mean_std[idx_combi]) + ", " + str(idx_combi))
+print("alpha of min_combi = " + str(alphas[idx_rmse]))
 
 clf = Ridge(alpha=best_alpha,
             fit_intercept=fit_intercept,
