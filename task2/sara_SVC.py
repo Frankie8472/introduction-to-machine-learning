@@ -13,11 +13,11 @@ test = test.as_matrix()
 index_test = test[:, 0]
 x_test = test[:, 1:]
 
-solver = svm.SVC(gamma=0.001, C=100.)
+solver = svm.SVC(gamma=0.001, C=100., kernel="poly", degree=3) #default degree=3
 solver.fit(x_train, y_train)
-result = solver.predict(y_train)
+result = solver.predict(x_test)
 
 result = np.c_[index_test, result]
 solution = pd.DataFrame(result)
-solution.to_csv("sara_svc.csv", index=False, head=["Id", "y"])
+solution.to_csv("sara_svc_kernel=poly.csv", index=False, header=["Id", "y"])
 
