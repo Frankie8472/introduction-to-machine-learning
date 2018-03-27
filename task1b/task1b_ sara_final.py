@@ -12,7 +12,7 @@ data = pd.read_csv("train.csv", index_col="Id")
 data = data.as_matrix()
 
 #define alphas
-alpha = [float(i) for i in list(range(1, 100))]
+alpha = [float(i) for i in list(range(1, 100))]+[float(i) for i in list(range(600, 1000))]
 
 #read out data
 X_total = data[:, 1:]

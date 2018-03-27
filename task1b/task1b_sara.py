@@ -9,7 +9,7 @@ data = hallo.as_matrix()
 
 
 # n = np.shape(data)[0][float(i) for i in
-l = np.linspace(0.00001, 1.0, num=100).tolist() + [float(i) for i in list(range(1, 100))]
+l = np.linspace(0.00001, 1.0, num=100).tolist() + [float(i) for i in list(range(1, 100))]+ [float(i) for i in list(range(600, 1000))]
 
 
 X_total = data[:, 1:]
@@ -56,7 +56,7 @@ X_total = np.c_[X_total, X_total**2, np.exp(X_total), np.cos(X_total), np.ones(n
 clf = RidgeCV(alphas=l, fit_intercept=False, normalize=True)  # tol = 0.0001, note: fit_intercept is defautl True
 clf.fit(X_total, Y_total)
 a = clf.coef_
-
+print(clf.alpha_)
 result = pd.DataFrame(a)
 result.to_csv("sara_1b_fit_intercept=False.csv", index=False, header=False)
 
