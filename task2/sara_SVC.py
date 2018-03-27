@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 
 
-train = pd.read_csv("train.csb", index_col="Id")
+train = pd.read_csv("train.csv", index_col="Id")
 train = train.as_matrix()
 x_train = train[:, 1:]
 y_train = train[:, 0]
