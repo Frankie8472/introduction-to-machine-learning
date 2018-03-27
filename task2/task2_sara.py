@@ -34,4 +34,4 @@ print(result[:, :])
 
 
 output = pd.DataFrame(result)
-output.to_csv("task2_sara.csv", index=False, header=False)
+output.to_csv("task2_sara.csv", index=False, header=["Id","y"])
