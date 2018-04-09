@@ -26,7 +26,7 @@ rmse_avg = []
 # Iterate over all alphas
 for alpha in alphas:
 
-    clf = Ridge(alpha=alpha, copy_X=True, solver="auto")
+    clf = Ridge(alpha=alpha, copy_X=True, solver="auto", fit_intercept=False)
 
     for i in range(k):
 
@@ -53,4 +53,4 @@ for alpha in alphas:
 
 # Print solution to file
 result = pd.DataFrame(rmse_avg)
-result.to_csv("output_nicu.csv", index=False, header=False)
+result.to_csv("output_nicu_fit_intercept_false.csv", index=False, header=False)
