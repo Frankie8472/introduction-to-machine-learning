@@ -88,16 +88,16 @@ def preprocessing(X, y):
 
 def mlp_param_selection(set_name, X, y, nfold, iid):
     param_grid = {
-        'hidden_layer_sizes': [(10,), (20,), (16, 8, 4, 2), (14, 12, 10, 8, 6, 4, 2)],
+        'hidden_layer_sizes': [(20,), (16,), (16, 8, 4, 2), (2, 8, 16), (16, 2, 8)],
         # 'activation': ['identity', 'logistic', 'tanh', 'relu'],
-        'activation': ['identity', 'logistic', 'tanh', 'relu'],
+        # 'activation': ['identity', 'logistic', 'tanh', 'relu'],
         # 'solver': ['lbfgs', 'sgd', 'adam']
-        'solver': ['lbfgs', 'sgd'],     # ['lbfgs', 'sgd', 'adam']
-        'alpha': np.linspace(1, 20, 10),
+        # 'solver': ['lbfgs', 'sgd'],     # ['lbfgs', 'sgd', 'adam']
+        # 'alpha': np.linspace(1, 20, 10),
         # 'learning_rate': ['constant', 'invscaling', 'adaptive'],
         'max_iter': [100000],
         # 'shuffle': [True, False],
-        'tol': np.geomspace(10 ** -20, 10 ** -10, 11)
+        # 'tol': np.geomspace(10 ** -20, 10 ** -10, 11)
     }
 
     # Scorer / Loss function
@@ -108,7 +108,7 @@ def mlp_param_selection(set_name, X, y, nfold, iid):
         hidden_layer_sizes=(100, 100, 100, 100),  # 4 Hidden layers with 100 perceptrons each
         activation='tanh',
         solver='lbfgs',
-        alpha=0.0001,
+        alpha=16.0,
         # batch_size='auto',
         learning_rate='constant',
         # learning_rate_init=0.001,
@@ -167,7 +167,7 @@ data_sets = preprocessing(X_train, y_train)
 
 for set_name, data_set in data_sets:
     for iid in [True, False]:
-        for nfold in [5, 10]:
+        for nfold in [10]:
             mlp_param_selection(set_name, data_set, y_train, nfold, iid)
 
 # Get, split and transform test dataset

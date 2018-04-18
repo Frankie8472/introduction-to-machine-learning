@@ -58,9 +58,9 @@ def mlp_param_selection(X_test, X_train, y_train, nfold, iid):
         # learning_rate_init=0.001,
         # power_t=0.5,
         max_iter=100000,
-        shuffle=True,
+        shuffle=False,
         random_state=None,
-        tol=10 ** -6,
+        tol=10 ** -10,
         # verbose=False,
         # warm_start=False,
         # momentum=0.9,
@@ -91,6 +91,7 @@ def mlp_param_selection(X_test, X_train, y_train, nfold, iid):
     scores.append(grid_search.best_score_)
     y_pred = grid_search.predict(X_test)
     sol.append(y_pred)
+    grid_search.refit
 
 
 # Get, split and transform train dataset
@@ -98,7 +99,7 @@ data, index_train = read_csv_to_matrix("train.csv", "Id")
 X_train, y_train = split_into_x_y(data)
 data_test, index_test = read_csv_to_matrix("test.csv", "Id")
 
-for cv in [2, 3, 4, 5, 6, 7, 8, 9, 10]:
+for cv in [10]:
     mlp_param_selection(data_test, X_train, y_train, cv, True)
 
 
