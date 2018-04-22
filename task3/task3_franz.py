@@ -23,7 +23,7 @@ from imblearn.combine import SMOTEENN, SMOTETomek
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 8               # Number of cores for parallelization
+    cores = 4               # Number of cores for parallelization
     message_count = 1       # Bigger = More msgs
     tech = 'mlp'            # 'mlp', 'sgd', 'rbf' or 'ny'
     nfolds = [3, 5, 10]
@@ -198,15 +198,44 @@ if __name__ == "__main__":
     data_train, train_index = read_hdf_to_matrix("train.h5")
     data_test, test_index = read_hdf_to_matrix("test.h5")
 
-    # Parameter search/evaluation
-    for iid in iids:
-        for nfold in nfolds:     # for leave-one-out: np.size(X_train, 0)
-            parameter_selection(data_train, data_test, nfold, iid)
+    X, y = split_into_x_y(data_train)
+    adasyn = ADASYN()
+    smote = SMOTE()
+    ros = RandomOverSampler()
+    nearmiss = NearMiss()
+    renn = RepeatedEditedNearestNeighbours()
+    clustercentroids = ClusterCentroids()
+    smoteenn = SMOTEENN()
+    smotetomek = SMOTETomek()
 
-    # Get the prediction with the best score
-    best_score = np.amax(score_list)
-    best_score_index = score_list.index(best_score)
-    y_pred_best_score = y_pred_list[best_score_index]
+    X_adasyn, y_adasyn = adasyn.fit_sample(X, y)
+    X_smote, y_smote = smote.fit_sample(X, y)
+    X_ros, y_ros = RandomOverSampler = ros.fit_sample(X, y)
+    X_nearmiss, y_nearmiss = nearmiss.fit_sample(X, y)
+    X_renn, y_renn = renn.fit_sample(X, y)
+    X_clustercentroids, y_clustercentroids = clustercentroids.fit_sample(X, y)
+    X_smoteenn, y_smoteenn = smoteenn.fit_sample(X, y)
+    X_smotetomek, y_smotetomek = smotetomek.fit_sample(X, y)
 
-    # Print solution to file
-    write_to_csv_from_vector("sample_franz.csv", test_index, y_pred_best_score)
+    print(np.size(y))
+    print(np.size(y_smote))
+    print(np.size(y_ros))
+    print(np.size(y_nearmiss))
+    print(np.size(y_clustercentroids))
+    print(np.size(y_smoteenn))
+    print(np.size(y_smotetomek))
+
+
+    #
+    # # Parameter search/evaluation
+    # for iid in iids:
+    #     for nfold in nfolds:     # for leave-one-out: np.size(X_train, 0)
+    #         parameter_selection(data_train, data_test, nfold, iid)
+    #
+    # # Get the prediction with the best score
+    # best_score = np.amax(score_list)
+    # best_score_index = score_list.index(best_score)
+    # y_pred_best_score = y_pred_list[best_score_index]
+    #
+    # # Print solution to file
+    # write_to_csv_from_vector("sample_franz.csv", test_index, y_pred_best_score)
