@@ -16,10 +16,10 @@ from sklearn.model_selection import GridSearchCV
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 4               # Number of cores for parallelization
+    cores = 2               # Number of cores for parallelization
     message_count = 2       # Bigger = More msgs
-    nfolds = [3]
-    iids = [True] #[True, False]
+    nfolds = [10]
+    iids = [False]
     estimators = {}
     param_grids = {}
     y_pred_list = []
@@ -49,12 +49,12 @@ if __name__ == "__main__":
         clf = MLPClassifier()
 
         mlp_param_grid = {
-            'hidden_layer_sizes': [(16,)],
-            'activation': ['identity', 'logistic', 'tanh', 'relu'],
-            'solver': ['lbfgs', 'sgd', 'adam'],
-            'alpha': np.geomspace(1e-5, 1e2, 8),
-            'learning_rate': ['constant', 'invscaling', 'adaptive'],
-            'max_iter': [10000],
+            'hidden_layer_sizes': [(100,)],
+            'activation': ['tanh'],
+            'solver': ['lbfgs'],
+            'alpha': np.linspace(23, 25, 3),
+            'learning_rate': ['constant'],
+            'max_iter': [100],
             'shuffle': [False],
             'random_state': [42],
             'tol': [1e-4]
