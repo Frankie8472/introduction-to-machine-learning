@@ -23,7 +23,7 @@ from imblearn.combine import SMOTEENN, SMOTETomek
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 4              # Number of cores for parallelization
+    cores = 48              # Number of cores for parallelization
     message_count = 1       # Bigger = More msgs
     tech = 'mlp'            # 'mlp', 'sgd', 'rbf' or 'ny'
     nfolds = [3, 5, 10]
@@ -214,15 +214,15 @@ if __name__ == "__main__":
     X_smoteenn, y_smoteenn = smoteenn.fit_sample(X, y)
     X_smotetomek, y_smotetomek = smotetomek.fit_sample(X, y)
 
-    data_set.append(("normal", X, y, data_test))
-    data_set.append(("adasyn", X_adasyn, y_adasyn, adasyn.sample(data_test)))
-    data_set.append(("smote", X_smote, y_smote, smote.sample(data_test)))
-    data_set.append(("ros", X_ros, y_ros, ros.sample(data_test)))
-    data_set.append(("nearmiss", X_nearmiss, y_nearmiss, nearmiss.sample(data_test)))
-    data_set.append(("renn", X_renn, y_renn, renn.sample(data_test)))
-    data_set.append(("clustercentroids", X_clustercentroids, y_clustercentroids, clustercentroids.sample(data_test)))
-    data_set.append(("smoteenn", X_smoteenn, y_smoteenn, smoteenn.sample(data_test)))
-    data_set.append(("smotetomek", X_smotetomek, y_smotetomek, smotetomek.sample(data_test)))
+    data_set.append(("normal", X, y))
+    data_set.append(("adasyn", X_adasyn, y_adasyn))
+    data_set.append(("smote", X_smote, y_smote))
+    data_set.append(("ros", X_ros, y_ros))
+    data_set.append(("nearmiss", X_nearmiss, y_nearmiss))
+    data_set.append(("renn", X_renn, y_renn))
+    data_set.append(("clustercentroids", X_clustercentroids, y_clustercentroids))
+    data_set.append(("smoteenn", X_smoteenn, y_smoteenn))
+    data_set.append(("smotetomek", X_smotetomek, y_smotetomek))
 
     print(np.size(y))
     print(np.size(y_smote))
@@ -233,10 +233,10 @@ if __name__ == "__main__":
     print(np.size(y_smotetomek))
 
     # Parameter search/evaluation
-    for set_name, X_train, y_train, X_test in data_set:
+    for set_name, X_train, y_train in data_set:
         for iid in iids:
             for nfold in nfolds:     # for leave-one-out: np.size(X_train, 0)
-                parameter_selection(set_name, X_train, y_train, X_test, nfold, iid)
+                parameter_selection(set_name, X_train, y_train, data_test, nfold, iid)
 
     # Get the prediction with the best score
     best_score = np.amax(score_list)
