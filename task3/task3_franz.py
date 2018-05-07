@@ -1,7 +1,7 @@
 # train.h5      - the training set
 # test.h5       - the test set (make predictions based on this file)
 # sample.csv    - a sample submission file in the correct format
-
+#
 # !-----------------------------!
 #  RUN ONLY ON EULER WITH run.sh
 # !-----------------------------!
