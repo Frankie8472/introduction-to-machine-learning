@@ -12,8 +12,9 @@ from sklearn.metrics import accuracy_score, make_scorer
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-from sklearn.semi_supervised import LabelPropagation, LabelSpreading
-from sklearn.model_selection import GridSearchCV, StratifiedKFold
+from sklearn.linear_model import SGDClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.model_selection import GridSearchCV
 
 if __name__ == "__main__":
 
@@ -46,43 +47,29 @@ if __name__ == "__main__":
         return x, y
 
 
-    def semisupervised_stratified_kfold(y, *args, **kwargs):
-        labeled_idx = np.flatnonzero(y != -1)
-        unlabeled_idx = np.flatnonzero(y == -1)
-        skf = StratifiedKFold(*args, **kwargs)
-        for train, test in skf.split(y[labeled_idx], y[labeled_idx]):
-            train = np.concatenate([unlabeled_idx, labeled_idx.take(train)])
-            test = labeled_idx.take(test)
-            yield train, test
-
-
-    def parameter_selection(X_train_labeled, y_train_labeled, X_train_unlabeled, X_test, nfold, iid, n_components, whiten, tech):
+    def parameter_selection(X_train_labeled, y_train_labeled, X_test, nfold, iid, n_components, whiten, tech):
         ss = StandardScaler()
         pca = PCA(n_components=n_components,
                   whiten=whiten
                   )
 
-        y_train_unlabeled = np.int8(np.full((np.size(X_train_unlabeled, 0)), -1))
-        full_X_set = np.r_[X_train_labeled, X_train_unlabeled]
-        full_y_set = np.r_[y_train_labeled, y_train_unlabeled]
-
-        full_X_set = ss.fit_transform(full_X_set)
+        X_train_labeled = ss.fit_transform(X_train_labeled)
         X_test = ss.transform(X_test)
 
-        full_X_set = pca.fit_transform(full_X_set)
+        X_train_labeled = pca.fit_transform(X_train_labeled)
         X_test = pca.transform(X_test)
 
         lp_estimator = [
-            ('lp', LabelPropagation())
+            ('mlp', MLPClassifier())
         ]
 
         ls_estimator = [
             ('ls', LabelSpreading())
         ]
 
-        lp_param_grid = {
+        mlp_param_grid = {
             'lp__kernel': ['knn'], #, 'rbf'],   # or callable kernel function
-            'lp__gamma': np.geomspace(1e-3, 1e3, num=7),
+            'gamma': np.geomspace(1e-3, 1e3, num=7),
             'lp__n_neighbors': [1, 5, 10, 50, 100],
             'lp__max_iter': [10000],
             'lp__tol': [1e-6],
@@ -92,16 +79,16 @@ if __name__ == "__main__":
         ls_param_grid = {
             'ls__kernel': ['knn'],#, 'rbf'],   # or callable kernel function
             'ls__gamma': np.geomspace(1e-3, 1e3, num=7),
-            'ls__n_neighbors': [1, 5, 10, 50, 100],
+            'n_neighbors': [1, 5, 10, 50, 100],
             'ls__max_iter': [10000],
             'ls__tol': [1e-6],
             'ls__n_jobs': [cores]
         }
 
-        estimators['lp'] = lp_estimator
+        estimators['mlp'] = mlp_estimator
         estimators['ls'] = ls_estimator
 
-        param_grids['lp'] = lp_param_grid
+        param_grids['mlp'] = mlp_param_grid
         param_grids['ls'] = ls_param_grid
 
         # Scorer / Loss function
@@ -115,7 +102,7 @@ if __name__ == "__main__":
             n_jobs=cores,
             pre_dispatch='2*n_jobs',
             iid=iid,
-            cv=semisupervised_stratified_kfold(full_y_set),
+            cv=nfold,
             refit=True,
             verbose=message_count,
             error_score='raise',
@@ -123,7 +110,7 @@ if __name__ == "__main__":
         )
 
         # Train
-        grid_search.fit(full_X_set, full_y_set)
+        grid_search.fit(X_train_labeled, full_y_set)
 
         # Predict
         y_pred = grid_search.predict(X_test)
@@ -144,7 +131,6 @@ if __name__ == "__main__":
 
     # Get, split and transform train dataset
     data_train_labeled, train_labeled_index = read_hdf_to_matrix("train_labeled.h5")
-    data_train_unlabeled, train_unlabeled_index = read_hdf_to_matrix("train_unlabeled.h5")
     data_test, test_index = read_hdf_to_matrix("test.h5")
 
     X_train_labeled, y_train_labeled = split_into_x_y(data_train_labeled)
@@ -154,8 +140,8 @@ if __name__ == "__main__":
         for component in n_components:
             for white in whiten:
                 for iid in iids:
-                    for nfold in nfolds:
-                        parameter_selection(X_train_labeled, y_train_labeled, data_train_unlabeled, data_test, nfold, iid, component, white, tech)
+                    for nfold in nfolds:     # for leave-one-out: np.size(X_train, 0)
+                        parameter_selection(X_train_labeled, y_train_labeled, data_test, nfold, iid, component, white, tech)
 
     # Get the prediction with the best score
     best_score = np.amax(score_list)
@@ -163,4 +149,4 @@ if __name__ == "__main__":
     y_pred_best_score = y_pred_list[best_score_index]
 
     # Print solution to file
-    write_to_csv_from_vector("sample_franz_semi-supervised.csv", test_index, y_pred_best_score)
+    write_to_csv_from_vector("sample_franz_supervised.csv", test_index, y_pred_best_score)
