@@ -21,8 +21,7 @@ if __name__ == "__main__":
     cores = 3              # Number of cores for parallelization
     message_count = 2       # Bigger = More msgs
     techs = ['lp', 'ls']    # 'lp', 'ls'
-    whiten = [True, False]
-    n_components = [None, 0.95, 0.97, 0.99]
+
     nfolds = [3, 5, 10]     # try out 5 and 10
     iids = [True, False]
     estimators = {}
@@ -56,31 +55,28 @@ if __name__ == "__main__":
             yield train, test
 
 
-    def parameter_selection(X_train_labeled, y_train_labeled, X_train_unlabeled, X_test, nfold, iid, n_components, whiten, tech):
-        ss = StandardScaler()
-        pca = PCA(n_components=n_components,
-                  whiten=whiten
-                  )
+    def parameter_selection(data_train_labeled, X_train_unlabeled, X_test, nfold, iid, tech):
+        X_train_labeled, y_train_labeled = split_into_x_y(data_train_labeled)
 
         y_train_unlabeled = np.int8(np.full((np.size(X_train_unlabeled, 0)), -1))
         full_X_set = np.r_[X_train_labeled, X_train_unlabeled]
         full_y_set = np.r_[y_train_labeled, y_train_unlabeled]
 
-        full_X_set = ss.fit_transform(full_X_set)
-        X_test = ss.transform(X_test)
-
-        full_X_set = pca.fit_transform(full_X_set)
-        X_test = pca.transform(X_test)
-
         lp_estimator = [
+            ('ss', StandardScaler()),
+            ('pca', PCA()),
             ('lp', LabelPropagation())
         ]
 
         ls_estimator = [
+            ('ss', StandardScaler()),
+            ('pca', PCA()),
             ('ls', LabelSpreading())
         ]
 
         lp_param_grid = {
+            'pca__whiten': [True, False],
+            'pca__n_components': [None, 0.95, 0.97, 0.99],
             'lp__kernel': ['knn'], #, 'rbf'],   # or callable kernel function
             'lp__gamma': np.geomspace(1e-3, 1e3, num=7),
             'lp__n_neighbors': [1, 5, 10, 50, 100],
@@ -90,6 +86,8 @@ if __name__ == "__main__":
         }
 
         ls_param_grid = {
+            'pca__whiten': [True, False],
+            'pca__n_components': [None, 0.95, 0.97, 0.99],
             'ls__kernel': ['knn'],#, 'rbf'],   # or callable kernel function
             'ls__gamma': np.geomspace(1e-3, 1e3, num=7),
             'ls__n_neighbors': [1, 5, 10, 50, 100],
@@ -115,7 +113,7 @@ if __name__ == "__main__":
             n_jobs=cores,
             pre_dispatch='2*n_jobs',
             iid=iid,
-            cv=semisupervised_stratified_kfold(full_y_set),
+            cv=semisupervised_stratified_kfold(full_y_set, n_splits=nfold),
             refit=True,
             verbose=message_count,
             error_score='raise',
@@ -125,20 +123,17 @@ if __name__ == "__main__":
         # Train
         grid_search.fit(full_X_set, full_y_set)
 
-        # Predict
-        y_pred = grid_search.predict(X_test)
-
         # Save
         score_list.append(grid_search.best_score_)
-        y_pred_list.append(y_pred)
+        y_pred_list.append(grid_search.predict(X_test))
 
         print("======================================================================================")
-        print("(iid, nfold, n_components, whiten, tech): " + "(" + str(iid) + ", " + str(nfold) + ", " + str(n_components) + ", " + str(whiten) + ", " + str(tech) + ")")
+        print("(iid, nfold, tech): " + "(" + str(iid) + ", " + str(nfold) + ", " + str(tech) + ")")
         print("Best score:       " + str(grid_search.best_score_))
         print("Best parameters:   ")
-        print("")
+        print()
         print(grid_search.best_params_)
-        print("")
+        print()
         print("======================================================================================")
 
 
@@ -147,15 +142,11 @@ if __name__ == "__main__":
     data_train_unlabeled, train_unlabeled_index = read_hdf_to_matrix("train_unlabeled.h5")
     data_test, test_index = read_hdf_to_matrix("test.h5")
 
-    X_train_labeled, y_train_labeled = split_into_x_y(data_train_labeled)
-
     # Parameter search/evaluation
     for tech in techs:
-        for component in n_components:
-            for white in whiten:
-                for iid in iids:
-                    for nfold in nfolds:
-                        parameter_selection(X_train_labeled, y_train_labeled, data_train_unlabeled, data_test, nfold, iid, component, white, tech)
+        for iid in iids:
+            for nfold in nfolds:
+                parameter_selection(data_train_labeled, data_train_unlabeled, data_test, nfold, iid, tech)
 
     # Get the prediction with the best score
     best_score = np.amax(score_list)
