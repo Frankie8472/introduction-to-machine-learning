@@ -1,0 +1,83 @@
+Sender: LSF System <lsfadmin@eu-c7-003-08>
+Subject: Job 63446958: <python task4_franz_supervised.py> in cluster <euler> Done
+
+Job <python task4_franz_supervised.py> was submitted from host <eu-login-06> by user <knobelf> in cluster <euler> at Thu May 10 15:55:39 2018.
+Job was executed on host(s) <24*eu-c7-003-08>, in queue <normal.4h>, as user <knobelf> in cluster <euler> at Thu May 10 16:03:17 2018.
+                            <24*eu-c7-003-15>
+</cluster/home/knobelf> was used as the home directory.
+</cluster/home/knobelf> was used as the working directory.
+Started at Thu May 10 16:03:17 2018.
+Terminated at Thu May 10 16:15:47 2018.
+Results reported at Thu May 10 16:15:47 2018.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python task4_franz_supervised.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   29468.77 sec.
+    Max Memory :                                 10553 MB
+    Average Memory :                             7648.44 MB
+    Total Requested Memory :                     49152.00 MB
+    Delta Memory :                               38599.00 MB
+    Max Swap :                                   -
+    Max Processes :                              51
+    Max Threads :                                55
+    Run time :                                   765 sec.
+    Turnaround time :                            1208 sec.
+
+The output (if any) follows:
+======================================================================================
+(iid, nfold, tech): (True, 3, etc)
+Best score:       0.858333333333
+Best parameters:   
+
+{'etc__criterion': 'gini', 'etc__max_features': 'auto', 'etc__n_estimators': 128, 'etc__n_jobs': 1, 'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+======================================================================================
+(iid, nfold, tech): (True, 5, etc)
+Best score:       0.863333333333
+Best parameters:   
+
+{'etc__criterion': 'entropy', 'etc__max_features': 'auto', 'etc__n_estimators': 128, 'etc__n_jobs': 1, 'pca__n_components': None, 'pca__whiten': True}
+
+======================================================================================
+======================================================================================
+(iid, nfold, tech): (True, 10, etc)
+Best score:       0.867222222222
+Best parameters:   
+
+{'etc__criterion': 'gini', 'etc__max_features': 'sqrt', 'etc__n_estimators': 128, 'etc__n_jobs': 1, 'pca__n_components': None, 'pca__whiten': True}
+
+======================================================================================
+======================================================================================
+(iid, nfold, tech): (False, 3, etc)
+Best score:       0.85821879308
+Best parameters:   
+
+{'etc__criterion': 'gini', 'etc__max_features': 'auto', 'etc__n_estimators': 128, 'etc__n_jobs': 1, 'pca__n_components': None, 'pca__whiten': True}
+
+======================================================================================
+======================================================================================
+(iid, nfold, tech): (False, 5, etc)
+Best score:       0.861666059285
+Best parameters:   
+
+{'etc__criterion': 'entropy', 'etc__max_features': 'auto', 'etc__n_estimators': 128, 'etc__n_jobs': 1, 'pca__n_components': None, 'pca__whiten': True}
+
+======================================================================================
+======================================================================================
+(iid, nfold, tech): (False, 10, etc)
+Best score:       0.865783015263
+Best parameters:   
+
+{'etc__criterion': 'entropy', 'etc__max_features': 'auto', 'etc__n_estimators': 128, 'etc__n_jobs': 1, 'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
