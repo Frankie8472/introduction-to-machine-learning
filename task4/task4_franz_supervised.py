@@ -1,11 +1,13 @@
-# train.h5      - the training set
-# test.h5       - the test set (make predictions based on this file)
-# sample.csv    - a sample submission file in the correct format
+# train_labeled.h5      - the labeled training set
+# train_unlabeled.h5    - the unlabeled training set
+# test.h5               - the test set (make predictions based on this file)
+# sample.csv            - a sample submission file in the correct format
 
 # !-----------------------------!
 #  RUN ONLY ON EULER WITH run.sh
 # !-----------------------------!
 
+import time
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.metrics import accuracy_score, make_scorer
@@ -22,12 +24,11 @@ if __name__ == "__main__":
 
     # Parameter initialization
     cores = 3              # Number of cores for parallelization
-    message_count = 2      # Bigger = More msgs
-    techs = ['gbc']       # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
-    whiten = [True, False]
-    n_components = [None, 0.95, 0.97, 0.99]
-    nfolds = [3, 5, 10]     # try out 5 and 10
-    iids = [True, False]
+    message_count = 3      # Bigger = More msgs
+    techs = ['etc']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
+    nfolds = [3, 5, 10]    # try out 5 and 10
+    iids = [False, True]
+    n_components = [None, 0.20, 0.40, 0.60, 0.80]
     estimators = {}
     param_grids = {}
     y_pred_list = []
@@ -102,7 +103,7 @@ if __name__ == "__main__":
 
         mlp_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
+            'pca__n_components': n_components,
             'mlp__hidden_layer_sizes': [(128,), (69,), (128, 64, 32, 16), (1024, 512, 256, 128)],
             'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
             'mlp__solver': ['lbfgs', 'sgd', 'adam'],
@@ -116,7 +117,7 @@ if __name__ == "__main__":
 
         lsvc_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
+            'pca__n_components': n_components,
             'lsvc__penalty': ['l1', 'l2'],
             'lsvc__loss': ['hinge', 'squared_hinge'],
             'lsvc__dual': [False, True],
@@ -129,7 +130,7 @@ if __name__ == "__main__":
 
         svc_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
+            'pca__n_components': n_components,
             'svc__C': np.geomspace(1e-7, 1e2, 10),
             'svc__kernel': ['linear', 'poly', 'rbf', 'sigmoid', 'precomputed'],
             'svc__degree': [0, 1, 2, 3],    # mby try out 4?
@@ -143,32 +144,32 @@ if __name__ == "__main__":
 
         knc_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
+            'pca__n_components': n_components,
             'knc__n_neighbors': [9, 10],
             'knc__weights': ['uniform', 'distance'],
             'knc__algorithm': ['ball_tree', 'kd_tree', 'brute'],    # mby use 'auto' ?
             'knc__leaf_size': [10, 128, 64],
             'knc__p': [1, 2, 5],
             #'knc__metric': ['minkowski'],
-            'knc__n_jobs': cores
+            'knc__n_jobs': [cores]
         }
 
         rfc_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
+            'pca__n_components': n_components,
             'rfc__n_estimators': [10, 128, 64],
             'rfc__criterion': ['gini', 'entropy'],
             'rfc__max_features': ['auto', 'sqrt', 'log2', None],
-            'rfc__n_jobs': cores
+            'rfc__n_jobs': [cores]
         }
 
         etc_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
+            'pca__n_components': n_components,
             'etc__n_estimators': [10, 128, 64],
             'etc__criterion': ['gini', 'entropy'],
             'etc__max_features': ['auto', 'sqrt', 'log2', None],
-            'etc__n_jobs': cores
+            'etc__n_jobs': [cores]
         }
 
         gbc_param_grid = {
@@ -241,7 +242,7 @@ if __name__ == "__main__":
         for iid in iids:
             for nfold in nfolds:
                 parameter_selection(data_train_labeled, data_test, nfold, iid, tech)
-
+                time.sleep(5)
     # Get the prediction with the best score
     best_score = np.amax(score_list)
     best_score_index = score_list.index(best_score)
