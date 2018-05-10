@@ -7,7 +7,6 @@
 #  RUN ONLY ON EULER WITH run.sh
 # !-----------------------------!
 
-import time
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.metrics import accuracy_score, make_scorer
@@ -23,12 +22,12 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 3              # Number of cores for parallelization
+    cores = 4             # Number of cores for parallelization
     message_count = 3      # Bigger = More msgs
     techs = ['etc']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
-    nfolds = [3, 5, 10]    # try out 5 and 10
-    iids = [False, True]
-    n_components = [None, 0.20, 0.40, 0.60, 0.80]
+    nfolds = [3, 5, 10]
+    iids = [True, False]
+    n_components = [None, 0.20, 0.40, 0.60, 0.80, 0.90]
     estimators = {}
     param_grids = {}
     y_pred_list = []
@@ -151,7 +150,7 @@ if __name__ == "__main__":
             'knc__leaf_size': [10, 128, 64],
             'knc__p': [1, 2, 5],
             #'knc__metric': ['minkowski'],
-            'knc__n_jobs': [cores]
+            'knc__n_jobs': [1]
         }
 
         rfc_param_grid = {
@@ -160,16 +159,16 @@ if __name__ == "__main__":
             'rfc__n_estimators': [10, 128, 64],
             'rfc__criterion': ['gini', 'entropy'],
             'rfc__max_features': ['auto', 'sqrt', 'log2', None],
-            'rfc__n_jobs': [cores]
+            'rfc__n_jobs': [1]
         }
-
+# todo: find best parameters
         etc_param_grid = {
             'pca__whiten': [True, False],
             'pca__n_components': n_components,
             'etc__n_estimators': [10, 128, 64],
             'etc__criterion': ['gini', 'entropy'],
             'etc__max_features': ['auto', 'sqrt', 'log2', None],
-            'etc__n_jobs': [cores]
+            'etc__n_jobs': [1]
         }
 
         gbc_param_grid = {
@@ -197,7 +196,7 @@ if __name__ == "__main__":
         param_grids['rfc'] = rfc_param_grid
         param_grids['etc'] = etc_param_grid
         param_grids['gbc'] = gbc_param_grid
-        print(estimators['mlp'])
+
         # Scorer / Loss function
         acc = make_scorer(accuracy_score, greater_is_better=True)
 
@@ -242,7 +241,7 @@ if __name__ == "__main__":
         for iid in iids:
             for nfold in nfolds:
                 parameter_selection(data_train_labeled, data_test, nfold, iid, tech)
-                time.sleep(5)
+
     # Get the prediction with the best score
     best_score = np.amax(score_list)
     best_score_index = score_list.index(best_score)

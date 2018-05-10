@@ -18,12 +18,12 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 3              # Number of cores for parallelization
+    cores = 4               # Number of cores for parallelization
     message_count = 2       # Bigger = More msgs
     techs = ['lp', 'ls']    # 'lp', 'ls'
-
     nfolds = [3, 5, 10]     # try out 5 and 10
     iids = [True, False]
+    n_components = [None, 0.20, 0.40, 0.60, 0.80]
     estimators = {}
     param_grids = {}
     y_pred_list = []
@@ -76,24 +76,24 @@ if __name__ == "__main__":
 
         lp_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
-            'lp__kernel': ['knn'], #, 'rbf'],   # or callable kernel function
+            'pca__n_components': n_components,
+            'lp__kernel': ['knn', 'rbf'],   # or callable kernel function
             'lp__gamma': np.geomspace(1e-3, 1e3, num=7),
             'lp__n_neighbors': [1, 5, 10, 50, 100],
-            'lp__max_iter': [10000],
+            'lp__max_iter': [100000],
             'lp__tol': [1e-6],
-            'lp__n_jobs': [cores]
+            'lp__n_jobs': [1]
         }
 
         ls_param_grid = {
             'pca__whiten': [True, False],
-            'pca__n_components': [None, 0.95, 0.97, 0.99],
-            'ls__kernel': ['knn'],#, 'rbf'],   # or callable kernel function
+            'pca__n_components': n_components,
+            'ls__kernel': ['knn', 'rbf'],   # or callable kernel function
             'ls__gamma': np.geomspace(1e-3, 1e3, num=7),
             'ls__n_neighbors': [1, 5, 10, 50, 100],
-            'ls__max_iter': [10000],
+            'ls__max_iter': [100000],
             'ls__tol': [1e-6],
-            'ls__n_jobs': [cores]
+            'ls__n_jobs': [1]
         }
 
         estimators['lp'] = lp_estimator
@@ -117,7 +117,7 @@ if __name__ == "__main__":
             refit=True,
             verbose=message_count,
             error_score='raise',
-            return_train_score=False,
+            return_train_score=False
         )
 
         # Train
