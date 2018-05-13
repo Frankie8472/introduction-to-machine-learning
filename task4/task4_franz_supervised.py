@@ -24,7 +24,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 # Parameter initialization
 cores = 48              # Number of cores for parallelization (3, 4, 48)
 message_count = 0       # Bigger = More msgs
-techs = ['lscv']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
+techs = ['lsvc']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
 nfolds = [3, 5, 10]
 iids = [True, False]
 n_components = [None, 0.20, 0.40, 0.60, 0.80, 0.90]
@@ -68,7 +68,7 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
         ('pca', PCA()),
         ('mlp', MLPClassifier())
     ]
-    # todo: find best parameters
+
     lsvc_estimator = [
         ('ss', StandardScaler()),
         ('pca', PCA()),
@@ -119,14 +119,15 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
         'mlp__tol': [1e-6]
     }
 
+    # todo: find best parameters
     lsvc_param_grid = {
         'pca__whiten': [True, False],
         'pca__n_components': n_components,
-        'lsvc__penalty': ['l1', 'l2'],
+        'lsvc__penalty': ['l2'],
         'lsvc__loss': ['hinge', 'squared_hinge'],
-        'lsvc__dual': [False, True],
+        'lsvc__dual': [True],   #False or hinge and l1
         'lsvc__tol': [1e-6],
-        'lsvc__C': np.geomspace(1e-7, 1e2, 10),
+        'lsvc__C': np.linspace(4, 26, 12),
         'lsvc__multi_class': ['ovr', 'crammer_singer'],
         'lsvc__fit_intercept': [True, False],
         'lsvc__max_iter': [10000]
