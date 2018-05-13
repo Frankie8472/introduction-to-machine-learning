@@ -18,12 +18,12 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 4               # Number of cores for parallelization
-    message_count = 2       # Bigger = More msgs
+    cores = 48              # Number of cores for parallelization
+    message_count = 0       # Bigger = More msgs
     techs = ['lp', 'ls']    # 'lp', 'ls'
     nfolds = [3, 5, 10]     # try out 5 and 10
     iids = [True, False]
-    n_components = [None, 0.20, 0.40, 0.60, 0.80]
+    n_components = [None, 0.20, 0.40, 0.60, 0.80, 0.90]
     estimators = {}
     param_grids = {}
     y_pred_list = []
@@ -45,11 +45,11 @@ if __name__ == "__main__":
         return x, y
 
 
-    def semisupervised_stratified_kfold(y, *args, **kwargs):
+    def semisupervised_stratified_kfold(X, y, *args, **kwargs):
         labeled_idx = np.flatnonzero(y != -1)
         unlabeled_idx = np.flatnonzero(y == -1)
         skf = StratifiedKFold(*args, **kwargs)
-        for train, test in skf.split(y[labeled_idx], y[labeled_idx]):
+        for train, test in skf.split(X[labeled_idx], y[labeled_idx]):
             train = np.concatenate([unlabeled_idx, labeled_idx.take(train)])
             test = labeled_idx.take(test)
             yield train, test
@@ -113,7 +113,7 @@ if __name__ == "__main__":
             n_jobs=cores,
             pre_dispatch='2*n_jobs',
             iid=iid,
-            cv=semisupervised_stratified_kfold(full_y_set, n_splits=nfold),
+            cv=semisupervised_stratified_kfold(full_X_set, full_y_set, n_splits=nfold),
             refit=True,
             verbose=message_count,
             error_score='raise',
@@ -135,7 +135,6 @@ if __name__ == "__main__":
         print(grid_search.best_params_)
         print()
         print("======================================================================================")
-
 
     # Get, split and transform train dataset
     data_train_labeled, train_labeled_index = read_hdf_to_matrix("train_labeled.h5")
