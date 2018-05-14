@@ -25,9 +25,9 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 cores = 48              # Number of cores for parallelization (3, 4, 48)
 message_count = 0       # Bigger = More msgs
 techs = ['lsvc']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
-nfolds = [3, 5, 10]
+nfolds = [10]
 iids = [True, False]
-n_components = [None, 0.20, 0.40, 0.60, 0.80, 0.90]
+n_components = [None, 0.20, 0.50, 0.90]
 
 # Globals
 data_train_labeled = None
@@ -108,7 +108,7 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
     mlp_param_grid = {
         'pca__whiten': [True, False],
         'pca__n_components': n_components,
-        'mlp__hidden_layer_sizes': [(128,), (69,), (128, 64, 32, 16), (1024, 512, 256, 128)],
+        'mlp__hidden_layer_sizes': [(100,), (128,), (69,), (128, 64, 32, 16), (1024, 512, 256, 128)],
         'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
         'mlp__solver': ['lbfgs', 'sgd', 'adam'],
         'mlp__alpha': np.geomspace(1e-7, 1e2, 10),
@@ -127,10 +127,10 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
         'lsvc__loss': ['hinge', 'squared_hinge'],
         'lsvc__dual': [True],   #False or hinge and l1
         'lsvc__tol': [1e-6],
-        'lsvc__C': np.linspace(4, 26, 12),
+        'lsvc__C': np.linspace(4, 20, 9),
         'lsvc__multi_class': ['ovr', 'crammer_singer'],
         'lsvc__fit_intercept': [True, False],
-        'lsvc__max_iter': [10000]
+        'lsvc__max_iter': [100000]
     }
 
     svc_param_grid = {
