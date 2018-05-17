@@ -80,7 +80,7 @@ if __name__ == "__main__":
             'lp__kernel': ['knn', 'rbf'],   # or callable kernel function
             'lp__gamma': np.geomspace(1e-3, 1e3, num=7),
             'lp__n_neighbors': [1, 5, 10, 50, 100],
-            'lp__max_iter': [100000],
+            'lp__max_iter': [10000],
             'lp__tol': [1e-6],
             'lp__n_jobs': [1]
         }
@@ -91,7 +91,7 @@ if __name__ == "__main__":
             'ls__kernel': ['knn', 'rbf'],   # or callable kernel function
             'ls__gamma': np.geomspace(1e-3, 1e3, num=7),
             'ls__n_neighbors': [1, 5, 10, 50, 100],
-            'ls__max_iter': [100000],
+            'ls__max_iter': [10000],
             'ls__tol': [1e-6],
             'ls__n_jobs': [1]
         }
