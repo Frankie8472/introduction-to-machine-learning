@@ -109,7 +109,7 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
         'pca__whiten': [True, False],
         'pca__n_components': n_components,
         # use a small layer in the middle (20-70% of the biggest) for countering overfitting ><><
-        'mlp__hidden_layer_sizes': [(1,), (100,), (128,), (69,), (128, 64, 32, 16), (1024, 512, 256, 128)],
+        'mlp__hidden_layer_sizes': [(1,), (100,), (128,), (69,)],   # , (128, 64, 32, 16), (1024, 512, 256, 128)],
         'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
         'mlp__solver': ['lbfgs', 'sgd', 'adam'],
         'mlp__alpha': np.geomspace(1e-7, 1e2, 10),
