@@ -212,7 +212,7 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
         param_grid=param_grids[tech],
         scoring=acc,
         n_jobs=cores,
-        pre_dispatch='1*n_jobs',
+        pre_dispatch='2*n_jobs',
         iid=iid,
         cv=stratified_kfold(X_train_labeled, y_train_labeled, n_splits=nfold),
         refit=True,
