@@ -13,13 +13,12 @@ from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, StratifiedKFold
 
 if __name__ == "__main__":
-
     # Parameter initialization
     cores = 48  # Number of cores for parallelization
-    message_count = 10  # Bigger = More msgs
+    message_count = 0  # Bigger = More msgs
     nfolds = [3, 5, 10]  # try out 5 and 10
     iids = [True, False]
     n_components = [None, 0.20, 0.40, 0.60, 0.80, 0.90]
@@ -44,6 +43,12 @@ if __name__ == "__main__":
         return x, y
 
 
+    def stratified_kfold(X, y, *args, **kwargs):
+        skf = StratifiedKFold(*args, **kwargs)
+        for train, test in skf.split(X, y):
+            yield train, test
+
+
     def parameter_selection(data_train_labeled, X_train_unlabeled, X_test, nfold, iid):
         X_train_labeled, y_train_labeled = split_into_x_y(data_train_labeled)
 
@@ -63,30 +68,30 @@ if __name__ == "__main__":
             'pca__whiten': [True, False],
             'pca__n_components': n_components,
             # use a small layer in the middle (20-70% of the biggest) for countering overfitting ><><
-            # 'mlp__hidden_layer_sizes': [(1,), (100,), (128,), (69,)],  # , (128, 64, 32, 16), (1024, 512, 256, 128)],
-            # 'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
-            # 'mlp__solver': ['lbfgs', 'sgd', 'adam'],
-            # 'mlp__alpha': np.geomspace(1e-7, 1e2, 10),
-            # 'mlp__learning_rate': ['constant', 'invscaling', 'adaptive'],
-            # 'mlp__max_iter': [10000],
-            # 'mlp__shuffle': [True, False],
-            # 'mlp__random_state': [42],
-            # 'mlp__tol': [1e-6]
+            'mlp__hidden_layer_sizes': [(128,)],  # , (128, 64, 32, 16), (1024, 512, 256, 128)],
+            'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
+            'mlp__solver': ['lbfgs', 'sgd', 'adam'],
+            'mlp__alpha': np.geomspace(1e-7, 1e2, 10),
+            'mlp__learning_rate': ['constant', 'invscaling', 'adaptive'],
+            'mlp__max_iter': [1000],
+            'mlp__shuffle': [True, False],
+            'mlp__random_state': [42],
+            'mlp__tol': [1e-6]
         }
 
         mlp_full_param_grid = {
             'pca__whiten': [True, False],
             'pca__n_components': n_components,
             # use a small layer in the middle (20-70% of the biggest) for countering overfitting ><><
-            # 'mlp__hidden_layer_sizes': [(1,), (100,), (128,), (69,)],  # , (128, 64, 32, 16), (1024, 512, 256, 128)],
-            # 'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
-            # 'mlp__solver': ['lbfgs', 'sgd', 'adam'],
-            # 'mlp__alpha': np.geomspace(1e-7, 1e2, 10),
-            # 'mlp__learning_rate': ['constant', 'invscaling', 'adaptive'],
-            # 'mlp__max_iter': [10000],
-            # 'mlp__shuffle': [True, False],
-            # 'mlp__random_state': [42],
-            # 'mlp__tol': [1e-6]
+            'mlp__hidden_layer_sizes': [(128,)],  # , (128, 64, 32, 16), (1024, 512, 256, 128)],
+            'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
+            'mlp__solver': ['lbfgs', 'sgd', 'adam'],
+            'mlp__alpha': np.geomspace(1e-7, 1e2, 10),
+            'mlp__learning_rate': ['constant', 'invscaling', 'adaptive'],
+            'mlp__max_iter': [10000],
+            'mlp__shuffle': [True, False],
+            'mlp__random_state': [42],
+            'mlp__tol': [1e-6]
         }
 
         # Scorer / Loss function
@@ -100,7 +105,7 @@ if __name__ == "__main__":
             n_jobs=cores,
             pre_dispatch='2*n_jobs',
             iid=iid,
-            cv=nfold,
+            cv=stratified_kfold(X_train_labeled, y_train_labeled, n_splits=nfold),
             refit=True,
             verbose=message_count,
             error_score='raise',
@@ -124,7 +129,7 @@ if __name__ == "__main__":
             n_jobs=cores,
             pre_dispatch='2*n_jobs',
             iid=iid,
-            cv=nfold,
+            cv=stratified_kfold(full_X_set, full_y_set, n_splits=nfold),
             refit=True,
             verbose=message_count,
             error_score='raise',

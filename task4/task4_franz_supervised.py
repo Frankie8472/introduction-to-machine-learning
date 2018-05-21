@@ -25,7 +25,7 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 cores = 48              # Number of cores for parallelization (3, 4, 48)
 message_count = 0       # Bigger = More msgs
 techs = ['mlp']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
-nfolds = [10]
+nfolds = [3, 5, 10]
 iids = [True, False]
 n_components = [None, 0.20, 0.50, 0.90]
 
