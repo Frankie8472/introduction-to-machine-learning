@@ -1,0 +1,86 @@
+Sender: LSF System <lsfadmin@eu-c7-018-11>
+Subject: Job 64110249: <python task4_franz_semi-supervised_too_simple?.py> in cluster <euler> Done
+
+Job <python task4_franz_semi-supervised_too_simple?.py> was submitted from host <eu-login-05> by user <knobelf> in cluster <euler> at Mon May 21 13:05:26 2018.
+Job was executed on host(s) <24*eu-c7-018-11>, in queue <bigmem.120h>, as user <knobelf> in cluster <euler> at Mon May 21 13:05:43 2018.
+                            <24*eu-c7-018-01>
+</cluster/home/knobelf> was used as the home directory.
+</cluster/home/knobelf> was used as the working directory.
+Started at Mon May 21 13:05:43 2018.
+Terminated at Mon May 21 13:18:06 2018.
+Results reported at Mon May 21 13:18:06 2018.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python task4_franz_semi-supervised_too_simple?.py
+------------------------------------------------------------
+
+Successfully completed.
+
+Resource usage summary:
+
+    CPU time :                                   16362.49 sec.
+    Max Memory :                                 4270 MB
+    Average Memory :                             1752.04 MB
+    Total Requested Memory :                     245760.00 MB
+    Delta Memory :                               241490.00 MB
+    Max Swap :                                   -
+    Max Processes :                              51
+    Max Threads :                                55
+    Run time :                                   754 sec.
+    Turnaround time :                            760 sec.
+
+The output (if any) follows:
+
+Fitting 3 folds for each of 12 candidates, totalling 36 fits
+
+======================================================================================
+(iid, nfold): (True, 3)
+Best score:       0.9375
+Best parameters:   
+
+{'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+======================================================================================
+(iid, nfold): (True, 5)
+Best score:       0.940933333333
+Best parameters:   
+
+{'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+======================================================================================
+(iid, nfold): (True, 10)
+Best score:       0.940666666667
+Best parameters:   
+
+{'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+======================================================================================
+(iid, nfold): (False, 3)
+Best score:       0.935733624963
+Best parameters:   
+
+{'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+======================================================================================
+(iid, nfold): (False, 5)
+Best score:       0.939800821389
+Best parameters:   
+
+{'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+======================================================================================
+(iid, nfold): (False, 10)
+Best score:       0.941499710717
+Best parameters:   
+
+{'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
