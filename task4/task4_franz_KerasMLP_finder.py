@@ -3,13 +3,16 @@
 # sample.csv    - a sample submission file in the correct format
 
 # Library imports
+import os
+os.environ["HDF5_DISABLE_VERSION_CHECK"] = "2"
+
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, make_scorer
 from keras.models import Sequential
-from keras.layers import Dense, Convolution2D, MaxPooling2D, Flatten, Reshape
-from keras.optimizers import Adam, Nadam
+from keras.layers import Dense, Convolution2D, MaxPooling2D, Flatten, Reshape, Dropout, Activation
+from keras.optimizers import Adam, Nadam, RMSprop
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import StratifiedKFold
@@ -78,19 +81,36 @@ def baseline2_model():
     return model
 
 
+def baseline_model3():
+    model = Sequential()
+    model.add(Dense(1024, input_shape=(128,), init='lecun_uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.4))
+    model.add(Dense(1024, init='lecun_uniform'))
+    model.add(Activation('relu'))
+    model.add(Dropout(0.4))
+    model.add(Dense(10, init='lecun_uniform'))
+    model.add(Activation('softmax'))
+    model.compile(loss='categorical_crossentropy', optimizer=RMSprop(), metrics=['accuracy'])
+    return model
+
+
 def baseline_model():
     adam = Adam(
         lr=0.01,
         beta_1=0.9,
-        beta_2=0.999,
+        beta_2=0.99,
         epsilon=None,
         decay=0.0,
-        amsgrad=True
+        amsgrad=False
     )
 
     # Create model
-    model = Sequential()
+    model = Sequential()    # 'elu', 'relu', 'softmax', 'selu', 'softplus', 'softsign', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear'
     model.add(Dense(128, input_dim=128, activation='relu'))
+    model.add(Dense(1024, activation='relu'))
+    model.add(Dropout(0.4))
+    model.add(Dense(1024, activation='relu'))
     model.add(Dense(10, activation='softmax'))
 
     # Compile model
@@ -99,7 +119,7 @@ def baseline_model():
 
 
 def get_estimator():
-    estimator = KerasClassifier(build_fn=baseline_model, epochs=15, batch_size=100, verbose=0)
+    estimator = KerasClassifier(build_fn=baseline_model3, epochs=10, batch_size=1000, verbose=0)
     return estimator
 
 
