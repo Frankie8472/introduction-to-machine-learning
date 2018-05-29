@@ -1,0 +1,94 @@
+Sender: LSF System <lsfadmin@eu-c7-027-03>
+Subject: Job 64529659: <python task4_franz_semi-supervised2.py> in cluster <euler> Exited
+
+Job <python task4_franz_semi-supervised2.py> was submitted from host <eu-login-05> by user <knobelf> in cluster <euler> at Mon May 28 12:35:37 2018.
+Job was executed on host(s) <24*eu-c7-027-03>, in queue <bigmem.4h>, as user <knobelf> in cluster <euler> at Mon May 28 12:35:45 2018.
+                            <24*eu-c7-015-15>
+</cluster/home/knobelf> was used as the home directory.
+</cluster/home/knobelf> was used as the working directory.
+Started at Mon May 28 12:35:45 2018.
+Terminated at Mon May 28 16:35:29 2018.
+Results reported at Mon May 28 16:35:29 2018.
+
+Your job looked like:
+
+------------------------------------------------------------
+# LSBATCH: User input
+python task4_franz_semi-supervised2.py
+------------------------------------------------------------
+
+TERM_RUNLIMIT: job killed after reaching LSF run time limit.
+Exited with exit code 140.
+
+Resource usage summary:
+
+    CPU time :                                   688054.62 sec.
+    Max Memory :                                 4096 MB
+    Average Memory :                             3273.88 MB
+    Total Requested Memory :                     245760.00 MB
+    Delta Memory :                               241664.00 MB
+    Max Swap :                                   1 MB
+    Max Processes :                              51
+    Max Threads :                                55
+    Run time :                                   14413 sec.
+    Turnaround time :                            14392 sec.
+
+The output (if any) follows:
+
+Fitting 5 folds for each of 720 candidates, totalling 3600 fits
+======================================================================================
+(iid, nfold): (True, 5)
+Best score:       0.913777777778
+Best parameters:   
+
+{'mlp__activation': 'tanh', 'mlp__alpha': 10.0, 'mlp__hidden_layer_sizes': (128,), 'mlp__learning_rate': 'constant', 'mlp__max_iter': 200, 'mlp__random_state': 42, 'mlp__shuffle': False, 'mlp__solver': 'lbfgs', 'mlp__tol': 1e-06, 'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+Fitting 10 folds for each of 720 candidates, totalling 7200 fits
+[Parallel(n_jobs=48)]: Done 104 tasks      | elapsed:  1.0min
+[Parallel(n_jobs=48)]: Done 354 tasks      | elapsed:  4.2min
+[Parallel(n_jobs=48)]: Done 704 tasks      | elapsed:  6.7min
+[Parallel(n_jobs=48)]: Done 1154 tasks      | elapsed: 10.3min
+[Parallel(n_jobs=48)]: Done 1704 tasks      | elapsed: 16.3min
+[Parallel(n_jobs=48)]: Done 2354 tasks      | elapsed: 25.3min
+[Parallel(n_jobs=48)]: Done 3104 tasks      | elapsed: 33.1min
+[Parallel(n_jobs=48)]: Done 3600 out of 3600 | elapsed: 38.4min finished
+======================================================================================
+(iid, nfold): (True, 10)
+Best score:       0.917222222222
+Best parameters:   
+
+{'mlp__activation': 'relu', 'mlp__alpha': 10.0, 'mlp__hidden_layer_sizes': (128,), 'mlp__learning_rate': 'constant', 'mlp__max_iter': 200, 'mlp__random_state': 42, 'mlp__shuffle': False, 'mlp__solver': 'lbfgs', 'mlp__tol': 1e-06, 'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+Fitting 5 folds for each of 720 candidates, totalling 3600 fits
+[Parallel(n_jobs=48)]: Done 104 tasks      | elapsed:  1.2min
+[Parallel(n_jobs=48)]: Done 354 tasks      | elapsed:  4.8min
+[Parallel(n_jobs=48)]: Done 704 tasks      | elapsed:  9.4min
+[Parallel(n_jobs=48)]: Done 1154 tasks      | elapsed: 13.0min
+[Parallel(n_jobs=48)]: Done 1704 tasks      | elapsed: 17.9min
+[Parallel(n_jobs=48)]: Done 2354 tasks      | elapsed: 23.2min
+[Parallel(n_jobs=48)]: Done 3104 tasks      | elapsed: 31.2min
+[Parallel(n_jobs=48)]: Done 3954 tasks      | elapsed: 44.5min
+[Parallel(n_jobs=48)]: Done 4904 tasks      | elapsed: 58.4min
+[Parallel(n_jobs=48)]: Done 5954 tasks      | elapsed: 70.3min
+[Parallel(n_jobs=48)]: Done 7104 tasks      | elapsed: 85.1min
+[Parallel(n_jobs=48)]: Done 7200 out of 7200 | elapsed: 86.3min finished
+======================================================================================
+(iid, nfold): (False, 5)
+Best score:       0.913777399518
+Best parameters:   
+
+{'mlp__activation': 'relu', 'mlp__alpha': 20.0, 'mlp__hidden_layer_sizes': (128,), 'mlp__learning_rate': 'constant', 'mlp__max_iter': 200, 'mlp__random_state': 42, 'mlp__shuffle': False, 'mlp__solver': 'lbfgs', 'mlp__tol': 1e-06, 'pca__n_components': None, 'pca__whiten': False}
+
+======================================================================================
+Fitting 10 folds for each of 720 candidates, totalling 7200 fits
+[Parallel(n_jobs=48)]: Done 104 tasks      | elapsed:  1.0min
+[Parallel(n_jobs=48)]: Done 354 tasks      | elapsed:  4.2min
+[Parallel(n_jobs=48)]: Done 704 tasks      | elapsed:  6.7min
+[Parallel(n_jobs=48)]: Done 1154 tasks      | elapsed: 10.3min
+[Parallel(n_jobs=48)]: Done 1704 tasks      | elapsed: 16.2min
+[Parallel(n_jobs=48)]: Done 2354 tasks      | elapsed: 25.0min
+[Parallel(n_jobs=48)]: Done 3104 tasks      | elapsed: 32.9min
+[Parallel(n_jobs=48)]: Done 3600 out of 3600 | elapsed: 38.1min finished
+User defined signal 2

@@ -18,9 +18,9 @@ from sklearn.model_selection import GridSearchCV, StratifiedKFold
 if __name__ == "__main__":
 
     # Parameter initialization
-    cores = 48              # Number of cores for parallelization
-    message_count = 0       # Bigger = More msgs
-    techs = ['lp', 'ls']    # 'lp', 'ls'
+    cores = 1              # Number of cores for parallelization
+    message_count = 2       # Bigger = More msgs
+    techs = ['ls', 'lp']    # 'lp', 'ls'
     nfolds = [3, 5, 10]     # try out 5 and 10
     iids = [True, False]
     n_components = [None, 0.20, 0.40, 0.60, 0.80, 0.90]
@@ -77,22 +77,22 @@ if __name__ == "__main__":
         lp_param_grid = {
             'pca__whiten': [True, False],
             'pca__n_components': n_components,
-            'lp__kernel': ['knn', 'rbf'],   # or callable kernel function
-            'lp__gamma': np.geomspace(1e-3, 1e3, num=7),
-            'lp__n_neighbors': [1, 5, 10, 50, 100],
-            'lp__max_iter': [10000],
-            'lp__tol': [1e-6],
+            #'lp__kernel': ['knn', 'rbf'],   # or callable kernel function
+            'lp__gamma': [3],
+            #'lp__n_neighbors': [1, 5, 10, 50, 100],
+            #'lp__max_iter': [10000],
+            #'lp__tol': [1e-6],
             'lp__n_jobs': [1]
         }
 
         ls_param_grid = {
             'pca__whiten': [True, False],
             'pca__n_components': n_components,
-            'ls__kernel': ['knn', 'rbf'],   # or callable kernel function
-            'ls__gamma': np.geomspace(1e-3, 1e3, num=7),
-            'ls__n_neighbors': [1, 5, 10, 50, 100],
-            'ls__max_iter': [10000],
-            'ls__tol': [1e-6],
+            #'ls__kernel': ['knn', 'rbf'],   # or callable kernel function
+            'ls__gamma': [30],    # np.geomspace(1e-3, 1e3, num=7),
+            #'ls__n_neighbors': [1, 5, 10, 50, 100],
+            #'ls__max_iter': [10000],
+            #'ls__tol': [1e-6],
             'ls__n_jobs': [1]
         }
 
@@ -111,7 +111,7 @@ if __name__ == "__main__":
             param_grid=param_grids[tech],
             scoring=acc,
             n_jobs=cores,
-            pre_dispatch='2*n_jobs',
+            pre_dispatch='1*n_jobs',
             iid=iid,
             cv=semisupervised_stratified_kfold(full_X_set, full_y_set, n_splits=nfold),
             refit=True,

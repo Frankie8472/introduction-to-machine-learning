@@ -22,8 +22,8 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV, StratifiedKFold
 
 # Parameter initialization
-cores = 48              # Number of cores for parallelization (3, 4, 48)
-message_count = 1       # Bigger = More msgs
+cores = 1              # Number of cores for parallelization (3, 4, 48)
+message_count = 10       # Bigger = More msgs
 techs = ['mlp']        # 'mlp', 'lsvc', 'svc', 'knc', 'rfc', 'etc', 'gbc'
 nfolds = [3, 5, 10]
 iids = [True, False]
@@ -112,10 +112,10 @@ def parameter_selection(data_train_labeled, X_test, nfold, iid, tech):
         'mlp__hidden_layer_sizes': [(128,)],   # , (128, 64, 32, 16), (1024, 512, 256, 128)],
         'mlp__activation': ['identity', 'logistic', 'tanh', 'relu'],
         'mlp__solver': ['lbfgs', 'sgd', 'adam'],
-        'mlp__alpha': np.geomspace(1e-5, 1e2, 8),
+        'mlp__alpha': np.linspace(0, 20, 5),
         'mlp__learning_rate': ['constant', 'invscaling', 'adaptive'],
-        'mlp__max_iter': [500],
-        'mlp__shuffle': [True, False],
+        'mlp__max_iter': [1000],
+        'mlp__shuffle': [False],
         'mlp__random_state': [42],
         'mlp__tol': [1e-5]
     }
