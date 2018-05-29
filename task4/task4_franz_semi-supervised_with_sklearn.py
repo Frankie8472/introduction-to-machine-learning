@@ -3,6 +3,9 @@
 # sample.csv    - a sample submission file in the correct format
 
 # Library imports
+import os
+os.environ["HDF5_DISABLE_VERSION_CHECK"] = "2"
+
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.neural_network import MLPClassifier

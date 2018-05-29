@@ -3,15 +3,15 @@
 # sample.csv    - a sample submission file in the correct format
 
 # Library imports
+import os
+os.environ["HDF5_DISABLE_VERSION_CHECK"] = "2"
+
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, make_scorer
 from keras.models import Sequential
 from keras.layers import Dense
 from keras.wrappers.scikit_learn import KerasClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import StratifiedKFold
 
 # Parameter initialization
 estimators = {}
@@ -73,7 +73,7 @@ def go(Data_train_labeled, X_train_unlabeled, X_test):
         for i in range(np.size(probability_unlabeled, 0)):
             max_prob = np.amax(probability_unlabeled[i])
             max_prob_class = predicted_unlabeled[i]
-            if max_prob >= 0.9:
+            if max_prob >= 0.99:
                 full_labeled = np.r_[full_labeled, [full_unlabeled[i]]]
                 full_y = np.r_[full_y, max_prob_class]
                 np.delete(full_unlabeled, i, 0)
