@@ -2,22 +2,11 @@
 # test.h5       - the test set (make predictions based on this file)
 # sample.csv    - a sample submission file in the correct format
 
-# Force Keras to run on CPU's
-import os
-os.environ["CUDA_DEVICE_ORDER"] = "PCI_BUS_ID"
-os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
-
 # Library imports
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.neural_network import MLPClassifier
 from sklearn.preprocessing import StandardScaler
-from sklearn.metrics import accuracy_score, make_scorer
-from keras.models import Sequential
-from keras.layers import Dense
-from keras.wrappers.scikit_learn import KerasClassifier
-from sklearn.model_selection import cross_val_score
-from sklearn.model_selection import StratifiedKFold
 
 # Parameter initialization
 estimators = {}
@@ -46,34 +35,6 @@ def split_into_x_y(data_set):
     return X, y
 
 
-def baseline_model():
-    # Create model
-    model = Sequential()
-    model.add(Dense(128, input_dim=128, activation='relu'))
-    model.add(Dense(10, activation='softmax'))
-
-    # Compile model
-    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
-    return model
-
-
-def get_estimator():
-    estimator = KerasClassifier(build_fn=baseline_model, epochs=10, batch_size=32, verbose=0)
-    return estimator
-
-
-def evaluate(data_labeled):
-
-    X, y = split_into_x_y(data_labeled)
-    ss = StandardScaler()
-    transformed_X = ss.fit_transform(X)
-    skf = StratifiedKFold(n_splits=10, shuffle=True, random_state=seed)
-    acc = make_scorer(accuracy_score, greater_is_better=True)
-    estimator = get_estimator()
-    results = cross_val_score(estimator, transformed_X, y, scoring=acc, cv=skf)
-    print("Baseline: %.2f%% (%.2f%%)" % (results.mean()*100, results.std()*100))
-
-
 def go(Data_train_labeled, X_train_unlabeled, X_test):
     full_labeled, full_y = split_into_x_y(Data_train_labeled)
     full_unlabeled = X_train_unlabeled
@@ -83,17 +44,16 @@ def go(Data_train_labeled, X_train_unlabeled, X_test):
         old_full_y_size = np.size(full_y)
 
         ss = StandardScaler()
-        mlp = get_estimator()
-        # mlp = MLPClassifier(
-        #     hidden_layer_sizes=(128,),
-        #     activation='relu',
-        #     solver='lbfgs',
-        #     alpha=13.0,
-        #     learning_rate='constant',
-        #     max_iter=200,
-        #     shuffle=False,
-        #     tol=1e-5
-        # )
+        mlp = MLPClassifier(
+            hidden_layer_sizes=(128,),
+            activation='relu',
+            solver='lbfgs',
+            alpha=13.0,
+            learning_rate='constant',
+            max_iter=200,
+            shuffle=False,
+            tol=1e-5
+        )
 
         transformed_labeled = ss.fit_transform(full_labeled)
         transformed_unlabeled = ss.transform(full_unlabeled)
@@ -111,22 +71,19 @@ def go(Data_train_labeled, X_train_unlabeled, X_test):
                 np.delete(full_unlabeled, i, 0)
 
     ss = StandardScaler()
-    mlp = get_estimator()
-    # mlp = MLPClassifier(
-    #     hidden_layer_sizes=(128,),
-    #     activation='relu',
-    #     solver='lbfgs',
-    #     alpha=13.0,
-    #     learning_rate='constant',
-    #     max_iter=200,
-    #     shuffle=False,
-    #     tol=1e-5
-    # )
+    mlp = MLPClassifier(
+        hidden_layer_sizes=(128,),
+        activation='relu',
+        solver='lbfgs',
+        alpha=13.0,
+        learning_rate='constant',
+        max_iter=200,
+        shuffle=False,
+        tol=1e-5
+    )
 
     transformed_labeled = ss.fit_transform(full_labeled)
     transformed_test = ss.transform(X_test)
-
-    evaluate(full_labeled)
 
     mlp.fit(transformed_labeled, full_y)
     y_pred_test = mlp.predict(transformed_test)
