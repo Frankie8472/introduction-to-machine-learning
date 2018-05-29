@@ -48,7 +48,7 @@ def baseline_model():
 
 
 def get_estimator():
-    estimator = KerasClassifier(build_fn=baseline_model, epochs=10, batch_size=32, verbose=0)
+    estimator = KerasClassifier(build_fn=baseline_model, epochs=20, batch_size=100, verbose=0)
     return estimator
 
 

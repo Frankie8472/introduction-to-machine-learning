@@ -12,7 +12,7 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.metrics import accuracy_score, make_scorer
 from keras.models import Sequential
 from keras.layers import Dense, Convolution2D, MaxPooling2D, Flatten, Reshape, Dropout, Activation
-from keras.optimizers import Adam, Nadam, RMSprop
+from keras.optimizers import Nadam, RMSprop
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.model_selection import StratifiedKFold
@@ -96,30 +96,18 @@ def baseline_model3():
 
 
 def baseline_model():
-    adam = Adam(
-        lr=0.01,
-        beta_1=0.9,
-        beta_2=0.99,
-        epsilon=None,
-        decay=0.0,
-        amsgrad=False
-    )
-
     # Create model
     model = Sequential()    # 'elu', 'relu', 'softmax', 'selu', 'softplus', 'softsign', 'tanh', 'sigmoid', 'hard_sigmoid', 'linear'
     model.add(Dense(128, input_dim=128, activation='relu'))
-    model.add(Dense(1024, activation='relu'))
-    model.add(Dropout(0.4))
-    model.add(Dense(1024, activation='relu'))
     model.add(Dense(10, activation='softmax'))
 
     # Compile model
-    model.compile(loss='categorical_crossentropy', optimizer=adam, metrics=['accuracy'])
+    model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accuracy'])
     return model
 
 
 def get_estimator():
-    estimator = KerasClassifier(build_fn=baseline_model3, epochs=10, batch_size=1000, verbose=0)
+    estimator = KerasClassifier(build_fn=baseline_model, epochs=20, batch_size=100, verbose=0)
     return estimator
 
 
