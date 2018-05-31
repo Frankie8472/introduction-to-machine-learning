@@ -4,13 +4,16 @@
 
 # Library imports
 import os
+
+from sklearn.decomposition import PCA
+
 os.environ["HDF5_DISABLE_VERSION_CHECK"] = "2"
 
 import numpy as np
 from pandas import read_hdf, DataFrame
 from sklearn.preprocessing import StandardScaler
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
 
 # Parameter initialization
@@ -18,6 +21,8 @@ estimators = {}
 param_grids = {}
 y_pred_list = []
 score_list = []
+features = 50
+max_iter = 3
 
 
 # Define exercise functions
@@ -39,7 +44,10 @@ def split_into_x_y(data_set):
 def baseline_model():
     # Create model
     model = Sequential()
-    model.add(Dense(128, input_dim=128, activation='relu'))
+    model.add(Dense(400, input_dim=features, activation='relu'))
+    model.add(Dropout(0.5))
+    model.add(Dense(400, activation='relu'))
+    model.add(Dropout(0.5))
     model.add(Dense(10, activation='softmax'))
 
     # Compile model
@@ -48,7 +56,7 @@ def baseline_model():
 
 
 def get_estimator():
-    estimator = KerasClassifier(build_fn=baseline_model, epochs=20, batch_size=100, verbose=0)
+    estimator = KerasClassifier(build_fn=baseline_model, epochs=100, batch_size=100, verbose=0)
     return estimator
 
 
@@ -56,15 +64,20 @@ def go(Data_train_labeled, X_train_unlabeled, X_test):
     full_labeled, full_y = split_into_x_y(Data_train_labeled)
     full_unlabeled = X_train_unlabeled
     old_full_y_size = 0
-    while old_full_y_size != np.size(full_y):
+    count = 0
+    while (old_full_y_size != np.size(full_y)) & (count < max_iter):
+        count = count + 1
         print(old_full_y_size)
         old_full_y_size = np.size(full_y)
 
+        pca = PCA(n_components=features)
         ss = StandardScaler()
         mlp = get_estimator()
 
-        transformed_labeled = ss.fit_transform(full_labeled)
-        transformed_unlabeled = ss.transform(full_unlabeled)
+        transformed_labeled = pca.fit_transform(full_labeled)
+        transformed_labeled = ss.fit_transform(transformed_labeled)
+        transformed_unlabeled = pca.transform(full_unlabeled)
+        transformed_unlabeled = ss.transform(transformed_unlabeled)
 
         mlp.fit(transformed_labeled, full_y)
         probability_unlabeled = mlp.predict_proba(transformed_unlabeled)
@@ -78,17 +91,20 @@ def go(Data_train_labeled, X_train_unlabeled, X_test):
                 full_y = np.r_[full_y, max_prob_class]
                 np.delete(full_unlabeled, i, 0)
 
+    pca = PCA(n_components=features)
     ss = StandardScaler()
     mlp = get_estimator()
 
-    transformed_labeled = ss.fit_transform(full_labeled)
-    transformed_test = ss.transform(X_test)
+    transformed_labeled = pca.fit_transform(full_labeled)
+    transformed_labeled = ss.fit_transform(transformed_labeled)
+    transformed_test = pca.transform(X_test)
+    transformed_test = ss.transform(transformed_test)
 
     mlp.fit(transformed_labeled, full_y)
     y_pred_test = mlp.predict(transformed_test)
 
     # Print solution to file
-    write_to_csv_from_vector("sample_franz_semi-supervised2.csv", test_index, y_pred_test)
+    write_to_csv_from_vector("sample_franz_semi-supervised_with_Keras.csv", test_index, y_pred_test)
 
 
 if __name__ == "__main__":
