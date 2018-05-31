@@ -11,6 +11,7 @@ import numpy as np
 from keras import Sequential
 from keras.layers import Dense, Dropout
 from keras.wrappers.scikit_learn import KerasClassifier
+from sklearn.linear_model import Lars, LassoLars
 from pandas import read_hdf, DataFrame
 from sklearn.linear_model import SGDClassifier, PassiveAggressiveClassifier, LogisticRegression
 from sklearn.model_selection import cross_val_score
@@ -19,7 +20,8 @@ from sklearn.multiclass import OneVsRestClassifier
 from sklearn.neural_network import MLPClassifier
 
 from sklearn.preprocessing import StandardScaler
-from sklearn.decomposition import PCA
+from sklearn.decomposition import PCA, FastICA
+from sklearn.semi_supervised import LabelPropagation, LabelSpreading
 from sklearn.svm import LinearSVC, SVC, NuSVC
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.ensemble import RandomForestClassifier, ExtraTreesClassifier, GradientBoostingClassifier, \
@@ -32,6 +34,18 @@ features = 60
 def get_estimator():
     global features
     features = 60
+
+    return KerasClassifier(build_fn=baseline_model, epochs=100, batch_size=100, verbose=0)  # 60 -> 0.9342
+    return Lars()
+    return LabelSpreading()
+    return LabelPropagation()
+    return LassoLars()
+    return GradientBoostingClassifier(n_estimators=1000)
+    return Logisticregression()
+    return MultiTaskLasso()
+    return MultiTaskElasticNet()
+    return RidgeClassifier()
+    return Ridge()
 
     return RandomForestClassifier(n_estimators=1000, n_jobs=2, min_samples_leaf=2, min_samples_split=3,criterion="entropy")
     return BaggingClassifier(KNeighborsClassifier(n_neighbors=1, leaf_size=5, p=2, n_jobs=2), max_samples=0.8,
@@ -47,9 +61,7 @@ def get_estimator():
     return SVC(C=3.0, kernel='poly', degree=3)
     return NuSVC(nu=0.1)  # 56 features -> 0.92
     return OneVsRestClassifier(LinearSVC(C=10.0))  # 0.84
-    return GradientBoostingClassifier(n_estimators=1000)
     return SVC(C=3.0)  # 65 features -> 0.92
-    return KerasClassifier(build_fn=baseline_model, epochs=100, batch_size=100, verbose=0)
     return MLPClassifier(
         hidden_layer_sizes=(400, 400),
         activation='relu',
@@ -115,15 +127,16 @@ def evaluate(data_labeled):
     X, y = split_into_x_y(data_labeled)
 
     estimator = get_estimator()
-    ss = StandardScaler()
+    fica = FastICA(n_components=features)
     pca = PCA(n_components=features)
+    ss = StandardScaler()
 
-    transformed_X = pca.fit_transform(X)
-    transformed_X = ss.fit_transform(transformed_X)
+    transformed_X = ss.fit_transform(X)
+    transformed_X = fica.fit_transform(transformed_X)
 
     skf = StratifiedKFold(n_splits=10, shuffle=False, random_state=42)
     acc = make_scorer(accuracy_score, greater_is_better=True)
-    results = cross_val_score(estimator, transformed_X, y, scoring=acc, cv=skf, n_jobs=5)
+    results = cross_val_score(estimator, transformed_X, y, scoring=acc, cv=skf, n_jobs=3)
 
     print("Baseline: %.2f%% (%.2f%%)" % (results.mean() * 100, results.std() * 100))
 
